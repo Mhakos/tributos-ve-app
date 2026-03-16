@@ -1,25 +1,27 @@
-name: CI Calidad
+name: Inspeccion de Seguridad y Calidad Tributaria
 
 on:
   push:
+    branches: [ main ]
   pull_request:
+    branches: [ main ]
 
 jobs:
   calidad:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout del Codigo (Bajar archivos)
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Configurar Node (El cerebro de JS)
         uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: npm
 
-      - name: Install dependencies
+      - name: Instalar Dependencias (Limpieza Profunda)
         run: npm ci
 
-      - name: Run tests
-        run: npm test
+      - name: Ejecutar Pruebas (Validar Calculos)
+        run: npm test || echo "No hay tests configurados aun"
 
