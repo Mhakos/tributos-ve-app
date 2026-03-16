@@ -1,0 +1,14 @@
+{
+  "name": "tributos-lead-rating",
+  "version": "1.0.0",
+  "description": "Sistema de Calificación de Leads - Tributos al Alcance (VZLA)",
+  "main": "logic.js",
+  "scripts": {
+    "demo": "node demo.js",
+    "test": "node demo.js"
+  },
+  "keywords": ["lead", "tributos", "venezuela", "seniat", "vip"],
+  "optionalDependencies": {
+    "better-sqlite3": "^11.0.0"
+  }
+}
