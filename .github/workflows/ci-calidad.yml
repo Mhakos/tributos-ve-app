@@ -1,4 +1,4 @@
-name: Inspeccion de Seguridad y Calidad Tributaria
+name: Inspección de Calidad JavaScript
 
 on:
   push:
@@ -10,18 +10,40 @@ jobs:
   calidad:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout del Codigo (Bajar archivos)
+      - name: Checkout del código
         uses: actions/checkout@v4
+        with:
+          # Requerido por Super-Linter para detectar cambios correctamente
+          fetch-depth: 0
 
-      - name: Configurar Node (El cerebro de JS)
+      - name: Configurar Node
         uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: npm
 
-      - name: Instalar Dependencias (Limpieza Profunda)
+      - name: Instalar dependencias
         run: npm ci
 
-      - name: Ejecutar Pruebas (Validar Calculos)
-        run: npm test || echo "No hay tests configurados aun"
+      - name: Verificar sintaxis de demo.js
+        run: node --check demo.js
+
+      - name: Ejecutar pruebas (npm test)
+        run: npm test
+
+      - name: Ejecutar Super-Linter (JavaScript)
+        uses: github/super-linter/slim@v6
+        env:
+          DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+          # Revisar el repo completo
+          VALIDATE_ALL_CODEBASE: true
+
+          # Solo JavaScript
+          VALIDATE_JAVASCRIPT_ES: true
+          VALIDATE_TYPESCRIPT_ES: false
+
+          # Formato (Prettier) para JS
+          VALIDATE_JAVASCRIPT_PRETTIER: true
 
