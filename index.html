@@ -3,176 +3,168 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tributos al Alcance · Test</title>
+    <title>Tributos al Alcance · Diagnóstico</title>
 
-    <!-- Tailwind CSS (CDN) -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      :root {
+        --slate-950: #020617; --slate-900: #0f172a; --slate-800: #1e293b;
+        --slate-700: #334155; --slate-400: #94a3b8; --slate-300: #cbd5e1;
+        --slate-200: #e2e8f0; --slate-100: #f1f5f9; --emerald-400: #34d399;
+        --emerald-300: #6ee7b7; --rose-400: #fb7185; --fuchsia-300: #d946ef;
+      }
+
+      body {
+        margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+        background-color: var(--slate-950); color: var(--slate-100); min-height: 100vh;
+      }
+
+      .container { max-width: 48rem; margin: 0 auto; padding: 2.5rem 1rem; }
+      
+      /* Header & Badges */
+      .badge {
+        display: inline-flex; items-center; gap: 0.5rem; border-radius: 9999px;
+        background-color: rgba(15, 23, 42, 0.7); padding: 0.25rem 0.75rem;
+        font-size: 0.75rem; color: var(--slate-300); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+      }
+      .dot { hieght: 0.5rem; width: 0.5rem; border-radius: 50%; background-color: var(--emerald-400); display: inline-block; margin-right: 4px; }
+      
+      h1 { font-size: 1.875rem; font-weight: 600; margin-top: 1rem; margin-bottom: 0.5rem; letter-spacing: -0.025em; }
+      .desc { color: var(--slate-300); margin-bottom: 2rem; }
+
+      /* Form Card */
+      .card {
+        background-color: rgba(15, 23, 42, 0.6); border-radius: 1rem; padding: 1.5rem;
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1); backdrop-filter: blur(8px);
+      }
+
+      .grid { display: grid; gap: 1rem; }
+      @media (min-width: 640px) { .grid-cols-2 { grid-template-columns: repeat(2, 1fr); } }
+
+      .field-group { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.25rem; }
+      label { font-size: 0.875rem; font-weight: 500; color: var(--slate-200); }
+
+      input, select {
+        background-color: rgba(2, 6, 23, 0.6); border: 1px solid rgba(255, 255, 255, 0.1);
+        color: white; border-radius: 0.75rem; padding: 0.75rem 1rem; font-size: 1rem; width: 100%; box-sizing: border-box;
+      }
+      input:focus, select:focus { outline: 2px solid var(--emerald-400); border-color: transparent; }
+      .hint { font-size: 0.75rem; color: var(--slate-400); margin-top: 0.25rem; }
+
+      /* Buttons */
+      button, .btn-wa {
+        cursor: pointer; display: inline-flex; justify-content: center; align-items: center;
+        border-radius: 0.75rem; background-color: var(--emerald-400); padding: 0.75rem 1.25rem;
+        font-weight: 500; color: var(--slate-950); border: none; transition: 0.2s; text-decoration: none;
+      }
+      button:hover, .btn-wa:hover { background-color: var(--emerald-300); }
+      
+      .status { font-size: 0.875rem; margin-top: 0.5rem; }
+      .text-success { color: var(--emerald-300); }
+      .text-error { color: var(--rose-400); }
+      .hidden { display: none; }
+
+      /* Resultado Styles */
+      .res-card { margin-top: 1.5rem; padding: 1.5rem; background: rgba(15, 23, 42, 0.6); border-radius: 1rem; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1); }
+      .res-badge { padding: 0.25rem 0.5rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
+      .vip-section { margin-top: 1.25rem; padding: 1rem; background: rgba(217, 70, 239, 0.1); border: 1px solid rgba(217, 70, 239, 0.3); border-radius: 0.75rem; }
+    </style>
   </head>
-  <body class="min-h-screen bg-slate-950 text-slate-100">
-    <main class="mx-auto max-w-3xl px-4 py-10">
-      <header class="mb-8">
-        <div class="inline-flex items-center gap-2 rounded-full bg-slate-900/70 px-3 py-1 text-xs text-slate-300 ring-1 ring-white/10">
-          <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
-          Diagnóstico tributario
-        </div>
-        <h1 class="mt-4 text-3xl font-semibold tracking-tight">Test de Tributos</h1>
-        <p class="mt-2 text-slate-300">
-          Completa el formulario para obtener tu diagnóstico de riesgo. Para finalizar, el <strong>RIF y el teléfono deben ser válidos</strong>.
-        </p>
+  <body>
+    <main class="container">
+      <header>
+        <div class="badge"><span class="dot"></span> Diagnóstico tributario</div>
+        <h1>Test de Tributos</h1>
+        <p class="desc">Completa el formulario para obtener tu diagnóstico de riesgo inmediato.</p>
       </header>
 
-      <!-- Contenedor donde se mostrará/inyectará el formulario -->
-      <section
-        id="tributos-form-container"
-        class="rounded-2xl bg-slate-900/60 p-6 ring-1 ring-white/10 backdrop-blur"
-      >
-        <form id="tributos-form" class="space-y-5">
-          <div class="grid gap-4 sm:grid-cols-2">
-            <label class="block">
-              <span class="text-sm font-medium text-slate-200">Nombre</span>
-              <input
-                name="nombre"
-                type="text"
-                required
-                placeholder="Ej: María González"
-                class="mt-2 w-full rounded-xl bg-slate-950/60 px-4 py-3 text-slate-100 ring-1 ring-white/10 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-400"
-              />
-            </label>
-
-            <label class="block">
-              <span class="text-sm font-medium text-slate-200">Teléfono</span>
-              <input
-                name="telefono"
-                type="tel"
-                required
-                placeholder="+58 412 5551234 / 0412 5551234"
-                class="mt-2 w-full rounded-xl bg-slate-950/60 px-4 py-3 text-slate-100 ring-1 ring-white/10 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-400"
-              />
-              <p class="mt-2 text-xs text-slate-400">Formato válido: <span class="font-medium">+58</span> o <span class="font-medium">04xx</span>.</p>
-            </label>
+      <section id="tributos-form-container" class="card">
+        <form id="tributos-form">
+          <div class="grid grid-cols-2">
+            <div class="field-group">
+              <label>Nombre</label>
+              <input name="nombre" type="text" required placeholder="Ej: María González" />
+            </div>
+            <div class="field-group">
+              <label>Teléfono</label>
+              <input name="telefono" type="tel" required placeholder="0412 5551234" />
+              <p class="hint">Formatos: +58 o 04xx.</p>
+            </div>
           </div>
 
-          <label class="block">
-            <span class="text-sm font-medium text-slate-200">RIF (obligatorio)</span>
-            <input
-              name="rif"
-              type="text"
-              required
-              placeholder="V-12345678-1"
-              class="mt-2 w-full rounded-xl bg-slate-950/60 px-4 py-3 text-slate-100 ring-1 ring-white/10 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-400"
-            />
-            <p class="mt-2 text-xs text-slate-400">Formato requerido: <span class="font-medium">J-12345678-9</span>.</p>
-          </label>
+          <div class="field-group">
+            <label>RIF (obligatorio)</label>
+            <input name="rif" type="text" required placeholder="V-12345678-1" />
+            <p class="hint">Ejemplo: J-12345678-9</p>
+          </div>
 
-          <div class="grid gap-4 sm:grid-cols-2">
-            <label class="block">
-              <span class="text-sm font-medium text-slate-200">Tipo de sujeto</span>
-              <select
-                name="tipoSujeto"
-                required
-                class="mt-2 w-full rounded-xl bg-slate-950/60 px-4 py-3 text-slate-100 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-emerald-400"
-              >
+          <div class="grid grid-cols-2">
+            <div class="field-group">
+              <label>Tipo de sujeto</label>
+              <select name="tipoSujeto" required>
                 <option value="" selected disabled>Seleccione…</option>
                 <option value="persona_natural">Persona natural</option>
                 <option value="pyme">Pyme</option>
                 <option value="contribuyente_especial">Contribuyente especial</option>
               </select>
-            </label>
-
-            <label class="block">
-              <span class="text-sm font-medium text-slate-200">Ubicación</span>
-              <select
-                name="ubicacion"
-                required
-                class="mt-2 w-full rounded-xl bg-slate-950/60 px-4 py-3 text-slate-100 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-emerald-400"
-              >
+            </div>
+            <div class="field-group">
+              <label>Ubicación</label>
+              <select name="ubicacion" required>
                 <option value="" selected disabled>Seleccione…</option>
                 <option value="caracas">Caracas</option>
                 <option value="valencia">Valencia</option>
                 <option value="maracaibo">Maracaibo</option>
                 <option value="resto_pais">Resto del país</option>
               </select>
-            </label>
+            </div>
           </div>
 
-          <label class="block">
-            <span class="text-sm font-medium text-slate-200">Ingresos mensuales (USD)</span>
-            <input
-              name="ingresosMensuales"
-              type="number"
-              min="0"
-              step="1"
-              required
-              placeholder="Ej: 5000"
-              class="mt-2 w-full rounded-xl bg-slate-950/60 px-4 py-3 text-slate-100 ring-1 ring-white/10 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-400"
-            />
-          </label>
+          <div class="field-group">
+            <label>Ingresos mensuales (USD)</label>
+            <input name="ingresosMensuales" type="number" min="0" step="1" required placeholder="Ej: 5000" />
+          </div>
 
-          <label class="block">
-            <span class="text-sm font-medium text-slate-200">Motivo de consulta</span>
-            <select
-              name="dolorPrincipal"
-              required
-              class="mt-2 w-full rounded-xl bg-slate-950/60 px-4 py-3 text-slate-100 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-emerald-400"
-            >
+          <div class="field-group">
+            <label>Motivo de consulta</label>
+            <select name="dolorPrincipal" required>
               <option value="" selected disabled>Seleccione…</option>
               <option value="multas_seniat">Gestión de multas y sanciones</option>
               <option value="manejo_igtf">Gestión de IGTF</option>
               <option value="retenciones_iva_islr">Retenciones de IVA/ISLR</option>
               <option value="auditoria_preventiva">Auditoría preventiva</option>
             </select>
-          </label>
-
-          <div class="grid gap-4 sm:grid-cols-2">
-            <label class="block">
-              <span class="text-sm font-medium text-slate-200">¿Sus máquinas fiscales están actualizadas?</span>
-              <select
-                name="maquinasFiscalesActualizadas"
-                required
-                class="mt-2 w-full rounded-xl bg-slate-950/60 px-4 py-3 text-slate-100 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-emerald-400"
-              >
-                <option value="" selected disabled>Seleccione…</option>
-                <option value="true">Sí</option>
-                <option value="false">No</option>
-              </select>
-            </label>
-
-            <label class="block">
-              <span class="text-sm font-medium text-slate-200">¿Tiene una fiscalización activa?</span>
-              <select
-                name="fiscalizacionActiva"
-                required
-                class="mt-2 w-full rounded-xl bg-slate-950/60 px-4 py-3 text-slate-100 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-emerald-400"
-              >
-                <option value="" selected disabled>Seleccione…</option>
-                <option value="true">Sí</option>
-                <option value="false">No</option>
-              </select>
-            </label>
           </div>
 
-          <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <button
-              type="submit"
-              class="inline-flex items-center justify-center rounded-xl bg-emerald-400 px-5 py-3 font-medium text-slate-950 hover:bg-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 focus:ring-offset-slate-950"
-            >
-              Terminar test
-            </button>
-            <p id="form-status" class="text-sm text-slate-300" aria-live="polite"></p>
+          <div class="grid grid-cols-2">
+            <div class="field-group">
+              <label>¿Máquinas fiscales actualizadas?</label>
+              <select name="maquinasFiscalesActualizadas" required>
+                <option value="" selected disabled>Seleccione…</option>
+                <option value="true">Sí</option>
+                <option value="false">No</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label>¿Tiene fiscalización activa?</label>
+              <select name="fiscalizacionActiva" required>
+                <option value="" selected disabled>Seleccione…</option>
+                <option value="true">Sí</option>
+                <option value="false">No</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 1rem; align-items: flex-start; margin-top: 1rem;">
+            <button type="submit">Terminar test</button>
+            <p id="form-status" class="status" aria-live="polite"></p>
           </div>
         </form>
       </section>
 
       <script>
         (function () {
-          const TIPO_SUJETO = {
-            PERSONA_NATURAL: 'persona_natural',
-            PYME: 'pyme',
-            CONTRIBUYENTE_ESPECIAL: 'contribuyente_especial'
-          };
-
+          const TIPO_SUJETO = { PERSONA_NATURAL: 'persona_natural', PYME: 'pyme', CONTRIBUYENTE_ESPECIAL: 'contribuyente_especial' };
           const UMBRAL_INGRESOS_VIP = 5000;
-
           const RIF_LETRAS_VALIDAS = ['V', 'E', 'J', 'P', 'G'];
           const RIF_VALORES_LETRA = { V: 4, E: 8, J: 12, P: 16, G: 20 };
           const RIF_FACTORES = [0, 3, 2, 7, 6, 5, 4, 3, 2];
@@ -184,302 +176,102 @@
           }
 
           function validarRIF(rif) {
-            if (!rif || typeof rif !== 'string') {
-              return { valido: false, tipoError: 'formato', mensaje: 'RIF inválido. Formato requerido: J-12345678-9' };
-            }
+            if (!rif || typeof rif !== 'string') return { valido: false, mensaje: 'RIF inválido.' };
             const normalizado = rif.replace(/\s|-/g, '').toUpperCase();
-
-            if (normalizado.length < 9 || normalizado.length > 10) {
-              return { valido: false, tipoError: 'formato', mensaje: 'RIF inválido. Formato requerido: J-12345678-9' };
-            }
-
+            if (normalizado.length < 9 || normalizado.length > 10) return { valido: false, mensaje: 'RIF inválido.' };
             const letra = normalizado[0];
-            if (!RIF_LETRAS_VALIDAS.includes(letra)) {
-              return { valido: false, tipoError: 'formato', mensaje: 'RIF inválido. Formato requerido: J-12345678-9' };
-            }
-
+            if (!RIF_LETRAS_VALIDAS.includes(letra)) return { valido: false, mensaje: 'Letra inicial inválida.' };
             const digitos = normalizado.slice(1, 9);
-            if (!/^\d{8}$/.test(digitos)) {
-              return { valido: false, tipoError: 'formato', mensaje: 'RIF inválido. Formato requerido: J-12345678-9' };
-            }
-
+            if (!/^\d{8}$/.test(digitos)) return { valido: false, mensaje: 'Debe contener 8 números.' };
             let suma = RIF_VALORES_LETRA[letra];
             for (let i = 0; i < 8; i++) suma += RIF_FACTORES[i + 1] * parseInt(digitos[i], 10);
-
-            let digitoVerificador = 11 - (suma % 11);
-            if (digitoVerificador >= 10) digitoVerificador = 0;
-
-            const rifEsperado = `${letra}${digitos}${digitoVerificador}`;
-            const rifIngresado = normalizado.length === 10 ? normalizado : null;
-
-            if (rifIngresado && rifIngresado !== rifEsperado) {
-              return {
-                valido: false,
-                tipoError: 'digito',
-                mensaje: `RIF inválido. Verifique el dígito verificador (ejemplo: ${formatearRIF(rifEsperado)})`
-              };
-            }
-
+            let dV = 11 - (suma % 11);
+            if (dV >= 10) dV = 0;
+            const rifEsperado = `${letra}${digitos}${dV}`;
+            if (normalizado.length === 10 && normalizado !== rifEsperado) return { valido: false, mensaje: `Inválido. Ejemplo: ${formatearRIF(rifEsperado)}` };
             return { valido: true, rifFormateado: formatearRIF(rifEsperado) };
           }
 
           function normalizarTelefonoVE(input) {
-            const raw = String(input || '').trim();
-            const digits = raw.replace(/[^\d+]/g, '');
-            const soloDigitos = raw.replace(/\D/g, '');
-
-            if (/^\+?58\d{10}$/.test(digits)) {
-              return `+${digits.startsWith('+') ? digits.slice(1) : digits}`;
-            }
-
-            if (/^04\d{9}$/.test(soloDigitos)) {
-              return `+58${soloDigitos.slice(1)}`;
-            }
-
+            const digits = String(input || '').replace(/\D/g, '');
+            if (digits.length === 12 && digits.startsWith('58')) return `+${digits}`;
+            if (digits.length === 11 && digits.startsWith('04')) return `+58${digits.slice(1)}`;
             return null;
           }
 
-          function procesarCuestionario(respuestas) {
-            const ingresos = Number(respuestas.ingresosMensuales);
-            if (!Number.isFinite(ingresos) || ingresos < 0) throw new Error('Ingresos mensuales inválidos');
+          function procesarCuestionario(resp) {
+            let score = 0; const factores = [];
+            const ingresos = Number(resp.ingresosMensuales);
 
-            let score = 0;
-            const factores = [];
-
-            if (respuestas.tipoSujeto === TIPO_SUJETO.CONTRIBUYENTE_ESPECIAL) {
-              score += 35;
-              factores.push('Contribuyente especial');
-            } else if (respuestas.tipoSujeto === TIPO_SUJETO.PYME) {
-              score += 20;
-              factores.push('Pyme');
-            } else {
-              score += 5;
-              factores.push('Persona natural');
-            }
-
-            if (respuestas.ubicacion === 'caracas') score += 5;
-            factores.push(`Ubicación: ${respuestas.ubicacion.replace('_', ' ')}`);
-
-            if (ingresos >= 20000) {
-              score += 30;
-              factores.push('Ingresos altos (más de $20.000)');
-            } else if (ingresos >= 5000) {
-              score += 20;
-              factores.push('Ingresos medios-altos ($5.000 a $20.000)');
-            } else if (ingresos >= 1000) {
-              score += 10;
-              factores.push('Ingresos medios ($1.000 a $5.000)');
-            } else {
-              score += 2;
-              factores.push('Ingresos bajos (menos de $1.000)');
-            }
-
-            switch (respuestas.dolorPrincipal) {
-              case 'multas_seniat':
-                score += 25;
-                factores.push('Multas');
-                break;
-              case 'manejo_igtf':
-                score += 15;
-                factores.push('Manejo de IGTF');
-                break;
-              case 'retenciones_iva_islr':
-                score += 20;
-                factores.push('Retenciones IVA/ISLR');
-                break;
-              case 'auditoria_preventiva':
-                score += 10;
-                factores.push('Auditoría preventiva');
-                break;
-              default:
-                score += 5;
-            }
-
-            if (respuestas.maquinasFiscalesActualizadas === false) {
-              score += 25;
-              factores.push('Máquinas fiscales no actualizadas');
-            } else {
-              factores.push('Máquinas fiscales actualizadas');
-            }
-
-            if (respuestas.fiscalizacionActiva === true) {
-              score += 40;
-              factores.push('Fiscalización activa');
-            } else {
-              factores.push('Sin fiscalización activa');
-            }
+            if (resp.tipoSujeto === TIPO_SUJETO.CONTRIBUYENTE_ESPECIAL) { score += 35; factores.push('Contribuyente especial'); }
+            else if (resp.tipoSujeto === TIPO_SUJETO.PYME) { score += 20; factores.push('Pyme'); }
+            
+            if (ingresos >= 5000) { score += 20; factores.push('Ingresos altos'); }
+            if (resp.maquinasFiscalesActualizadas === false) { score += 25; factores.push('Máquinas no actualizadas'); }
+            if (resp.fiscalizacionActiva === true) { score += 40; factores.push('Fiscalización activa'); }
 
             const puntaje = Math.min(100, score);
-            let nivel;
-            if (puntaje >= 70) nivel = 'crítico';
-            else if (puntaje >= 50) nivel = 'alto';
-            else if (puntaje >= 30) nivel = 'medio';
-            else nivel = 'bajo';
-
-            return { puntaje, nivel, factores, respuestas: { ...respuestas, ingresosMensuales: ingresos } };
-          }
-
-          function esVip({ respuestas }) {
-            const razones = [];
-            if (respuestas.tipoSujeto === TIPO_SUJETO.CONTRIBUYENTE_ESPECIAL) razones.push('Contribuyente especial');
-            if (respuestas.ingresosMensuales > UMBRAL_INGRESOS_VIP) razones.push(`Ingresos mayores a $${UMBRAL_INGRESOS_VIP.toLocaleString()}`);
-            if (respuestas.fiscalizacionActiva) razones.push('Fiscalización activa');
-            return { vip: razones.length > 0, razones };
+            let nivel = puntaje >= 70 ? 'crítico' : puntaje >= 50 ? 'alto' : puntaje >= 30 ? 'medio' : 'bajo';
+            return { puntaje, nivel, factores, respuestas: { ...resp, ingresosMensuales: ingresos } };
           }
 
           const form = document.getElementById('tributos-form');
           const statusEl = document.getElementById('form-status');
           const container = document.getElementById('tributos-form-container');
 
-          const resultadoEl = document.createElement('div');
-          resultadoEl.id = 'resultado';
-          resultadoEl.className = 'mt-6 hidden rounded-2xl bg-slate-900/60 p-6 ring-1 ring-white/10';
-          container.appendChild(resultadoEl);
-
           function setStatus(text, kind) {
-            const cls = kind === 'error' ? 'text-rose-300' : kind === 'success' ? 'text-emerald-300' : 'text-slate-300';
-            statusEl.className = `text-sm ${cls}`;
+            statusEl.className = `status ${kind === 'error' ? 'text-error' : kind === 'success' ? 'text-success' : ''}`;
             statusEl.textContent = text || '';
           }
 
-          function escapeHtml(str) {
-            return String(str).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[c]));
-          }
-
-          function linkWhatsAppE164(e164, mensaje) {
-            const numero = e164.replace(/^\+/, '');
-            return `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
-          }
-
-          form.elements.rif.addEventListener('input', (e) => {
-            const v = validarRIF(e.target.value);
-            if (!e.target.value.trim()) return setStatus('', 'info');
-            if (!v.valido) return setStatus(v.mensaje, 'error');
-            setStatus(`RIF válido: ${v.rifFormateado}`, 'success');
-          });
-
-          form.elements.telefono.addEventListener('input', (e) => {
-            const normalizado = normalizarTelefonoVE(e.target.value);
-            if (!e.target.value.trim()) return setStatus('', 'info');
-            if (!normalizado) return setStatus('Por favor, ingrese un número de teléfono válido de Venezuela', 'error');
-            setStatus(`Teléfono válido: ${normalizado}`, 'success');
-          });
-
           form.addEventListener('submit', (e) => {
             e.preventDefault();
-            setStatus('Procesando…', 'info');
+            const telNormalizado = normalizarTelefonoVE(form.elements.telefono.value);
+            const rifVal = validarRIF(form.elements.rif.value);
 
-            const nombre = String(form.elements.nombre.value || '').trim();
-            const telefonoInput = String(form.elements.telefono.value || '').trim();
-            const rifInput = String(form.elements.rif.value || '').trim();
-            const tipoSujeto = form.elements.tipoSujeto.value;
-            const ubicacion = form.elements.ubicacion.value;
-            const ingresosMensuales = form.elements.ingresosMensuales.value;
-            const dolorPrincipal = form.elements.dolorPrincipal.value;
-            const maquinasFiscalesActualizadas = form.elements.maquinasFiscalesActualizadas.value === 'true';
-            const fiscalizacionActiva = form.elements.fiscalizacionActiva.value === 'true';
-
-            if (!nombre || !telefonoInput || !rifInput || !tipoSujeto || !ubicacion || ingresosMensuales === '' || !dolorPrincipal) {
-              setStatus('Por favor, complete todos los campos obligatorios.', 'error');
+            if (!telNormalizado || !rifVal.valido) {
+              setStatus(rifVal.mensaje || 'Revise teléfono o RIF.', 'error');
               return;
             }
 
-            const telNormalizado = normalizarTelefonoVE(telefonoInput);
-            if (!telNormalizado) {
-              setStatus('Por favor, ingrese un número de teléfono válido de Venezuela', 'error');
-              return;
-            }
-
-            const rifVal = validarRIF(rifInput);
-            if (!rifVal.valido) {
-              if (rifVal.tipoError === 'formato') setStatus('RIF inválido. Formato requerido: J-12345678-9', 'error');
-              else setStatus(rifVal.mensaje, 'error');
-              return;
-            }
-
-            const diagnostico = procesarCuestionario({
-              tipoSujeto,
-              ubicacion,
-              ingresosMensuales,
-              dolorPrincipal,
-              maquinasFiscalesActualizadas,
-              fiscalizacionActiva
+            const diag = procesarCuestionario({
+              tipoSujeto: form.elements.tipoSujeto.value,
+              ubicacion: form.elements.ubicacion.value,
+              ingresosMensuales: form.elements.ingresosMensuales.value,
+              dolorPrincipal: form.elements.dolorPrincipal.value,
+              maquinasFiscalesActualizadas: form.elements.maquinasFiscalesActualizadas.value === 'true',
+              fiscalizacionActiva: form.elements.fiscalizacionActiva.value === 'true'
             });
 
-            const vip = esVip(diagnostico);
+            const esVip = diag.respuestas.tipoSujeto === TIPO_SUJETO.CONTRIBUYENTE_ESPECIAL || diag.respuestas.ingresosMensuales > UMBRAL_INGRESOS_VIP;
+            const badgeCls = diag.nivel === 'crítico' ? 'bg-rose-400' : diag.nivel === 'alto' ? 'bg-amber-300' : 'bg-emerald-300';
+            const msgVip = encodeURIComponent(`Hola Tributos a tu Alcance, mi RIF es ${rifVal.rifFormateado} y mi diagnóstico es ${diag.nivel}. Necesito asesoría.`);
 
-            const badge =
-              diagnostico.nivel === 'crítico'
-                ? 'bg-rose-400 text-slate-950'
-                : diagnostico.nivel === 'alto'
-                  ? 'bg-amber-300 text-slate-950'
-                  : diagnostico.nivel === 'medio'
-                    ? 'bg-sky-300 text-slate-950'
-                    : 'bg-emerald-300 text-slate-950';
-
-            const ubicacionTexto = ubicacion.replace('_', ' ');
-            const mensajeVip = `Hola Tributos a tu Alcance, mi RIF es ${rifVal.rifFormateado} y mi diagnóstico es de ${diagnostico.puntaje} puntos. Soy un cliente VIP y necesito asesoría para mi empresa en ${ubicacionTexto}.`;
-
-            const asesor1 = linkWhatsAppE164('+584122089575', mensajeVip);
-            const asesor2 = linkWhatsAppE164('+584265112653', mensajeVip);
-
-            resultadoEl.innerHTML = `
-              <div class="flex flex-wrap items-center justify-between gap-3">
-                <h2 class="text-lg font-semibold">Resultado del diagnóstico</h2>
-                <div class="flex items-center gap-2">
-                  <span class="rounded-full px-2 py-1 text-xs font-semibold ${badge}">${escapeHtml(diagnostico.nivel.toUpperCase())}</span>
-                  <span class="rounded-full ${vip.vip ? 'bg-fuchsia-300 text-slate-950' : 'bg-slate-700 text-slate-100'} px-2 py-1 text-xs font-semibold">
-                    ${vip.vip ? 'CLIENTE VIP' : 'NO VIP'}
-                  </span>
-                </div>
+            // Inyectar Resultado
+            const resDiv = document.createElement('div');
+            resDiv.className = 'res-card';
+            resDiv.innerHTML = `
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h2 style="margin:0; font-size:1.25rem;">Resultado</h2>
+                <span class="res-badge ${badgeCls}" style="color:#020617">${diag.nivel}</span>
               </div>
-
-              <div class="mt-4 grid gap-3 sm:grid-cols-2">
-                <div class="rounded-xl bg-slate-950/40 p-4 ring-1 ring-white/10">
-                  <div class="text-xs text-slate-400">RIF</div>
-                  <div class="mt-1 font-medium">${escapeHtml(rifVal.rifFormateado)}</div>
+              <p style="font-size:0.875rem; color:var(--slate-300);">Puntaje de riesgo: <strong>${diag.puntaje}</strong></p>
+              <ul style="font-size:0.875rem; color:var(--slate-400);">${diag.factores.map(f => `<li>${f}</li>`).join('')}</ul>
+              ${esVip ? `
+                <div class="vip-section">
+                  <p style="margin:0 0 1rem 0; font-weight:600; color:var(--fuchsia-300);">Atención Prioritaria WhatsApp:</p>
+                  <div style="display:grid; gap:0.5rem; grid-template-columns:1fr 1fr;">
+                    <a href="https://wa.me/584122089575?text=${msgVip}" class="btn-wa">Asesor 1</a>
+                    <a href="https://wa.me/584265112653?text=${msgVip}" class="btn-wa">Asesor 2</a>
+                  </div>
                 </div>
-                <div class="rounded-xl bg-slate-950/40 p-4 ring-1 ring-white/10">
-                  <div class="text-xs text-slate-400">Puntaje</div>
-                  <div class="mt-1 font-medium">${escapeHtml(diagnostico.puntaje)}</div>
-                </div>
-              </div>
-
-              <div class="mt-4">
-                <div class="text-sm font-medium text-slate-200">Factores detectados</div>
-                <ul class="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-300">
-                  ${diagnostico.factores.map((f) => `<li>${escapeHtml(f)}</li>`).join('')}
-                </ul>
-              </div>
-
-              ${
-                vip.vip
-                  ? `
-                    <div class="mt-5 rounded-xl bg-fuchsia-300/10 p-4 ring-1 ring-fuchsia-300/30">
-                      <div class="text-sm font-semibold text-fuchsia-200">Cliente VIP: elija su asesor por WhatsApp</div>
-                      <div class="mt-3 grid gap-3 sm:grid-cols-2">
-                        <a href="${asesor1}" target="_blank" rel="noopener" class="inline-flex items-center justify-center rounded-xl bg-emerald-400 px-4 py-3 font-medium text-slate-950 hover:bg-emerald-300">
-                          Asesor 1 (+58 412 208 9575)
-                        </a>
-                        <a href="${asesor2}" target="_blank" rel="noopener" class="inline-flex items-center justify-center rounded-xl bg-emerald-400 px-4 py-3 font-medium text-slate-950 hover:bg-emerald-300">
-                          Asesor 2 (+58 426 511 2653)
-                        </a>
-                      </div>
-                      <div class="mt-3 text-xs text-slate-300">
-                        Mensaje automático: <span class="text-slate-200">${escapeHtml(mensajeVip)}</span>
-                      </div>
-                    </div>
-                  `
-                  : ''
-              }
+              ` : ''}
             `;
-
-            resultadoEl.classList.remove('hidden');
-            setStatus('Listo. Diagnóstico generado.', 'success');
+            container.innerHTML = '';
+            container.appendChild(resDiv);
           });
         })();
       </script>
     </main>
   </body>
 </html>
-
