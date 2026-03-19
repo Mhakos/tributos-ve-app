@@ -229,3 +229,52 @@ export async function registrarLeadWeb(leadData, { db } = {}) {
   return { record, vipStatus, diagnostico: resultado };
 }
 
+export function generarHTMLResultado(diagnostico, esVip, rifFormateado) {
+  const nivel = diagnostico.nivelRiesgo;
+  const puntaje = diagnostico.scoreRiesgo;
+  const factores = diagnostico.factores;
+  
+  // Determinar clase CSS para el badge según nivel
+  let badgeCls = 'bg-rose-400'; // crítico por defecto
+  if (nivel === NIVEL_RIESGO.ALTO) {
+    badgeCls = 'bg-amber-300 nivel-alto';
+  } else if (nivel === NIVEL_RIESGO.MEDIO) {
+    badgeCls = 'bg-emerald-300 nivel-medio';
+  } else if (nivel === NIVEL_RIESGO.BAJO) {
+    badgeCls = 'bg-emerald-300';
+  }
+
+  // Mensaje para WhatsApp
+  const msgVip = encodeURIComponent(`Hola Tributos a tu Alcance, mi RIF es ${rifFormateado} y mi diagnóstico es ${nivel}. Necesito asesoría.`);
+
+  // HTML de botones de asesores (solo si es VIP)
+  const asesoresHTML = esVip ? `
+    <div class="vip-section">
+      <p style="margin:0 0 1rem 0; font-weight:600; color:var(--fuchsia-300);">Atención Prioritaria WhatsApp:</p>
+      <div style="display:grid; gap:0.5rem; grid-template-columns:1fr 1fr;">
+        <a href="https://wa.me/584122089575?text=${msgVip}" class="btn-wa" target="_blank" rel="noopener">Asesor 1</a>
+        <a href="https://wa.me/584265112653?text=${msgVip}" class="btn-wa" target="_blank" rel="noopener">Asesor 2</a>
+      </div>
+    </div>
+  ` : '';
+
+  // Estilo condicional para el badge (color del texto según nivel)
+  const badgeStyle = (nivel !== NIVEL_RIESGO.MEDIO && nivel !== NIVEL_RIESGO.ALTO) ? 'style="color:#020617"' : '';
+
+  // HTML final del resultado
+  const html = `
+    <div class="res-card">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h2 style="margin:0; font-size:1.25rem;">Resultado</h2>
+        <span class="res-badge ${badgeCls}" ${badgeStyle}>${nivel}</span>
+      </div>
+      <p style="font-size:0.875rem; color:var(--slate-300);">Puntaje de riesgo: <strong>${puntaje}</strong></p>
+      <ul style="font-size:0.875rem; color:var(--slate-400);">${factores.map(f => `<li>${f}</li>`).join('')}</ul>
+      ${asesoresHTML}
+      <button type="button" class="btn-reset" onclick="location.reload()">Volver a empezar</button>
+    </div>
+  `;
+
+  return html;
+}
+
