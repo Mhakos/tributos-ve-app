@@ -14,11 +14,11 @@ body {
 
 /* Header & Badges */
 .badge {
-  display: inline-flex; items-center; gap: 0.5rem; border-radius: 9999px;
+  display: inline-flex; align-items: center; gap: 0.5rem; border-radius: 9999px;
   background-color: rgba(15, 23, 42, 0.7); padding: 0.25rem 0.75rem;
   font-size: 0.75rem; color: var(--slate-300); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
 }
-.dot { hieght: 0.5rem; width: 0.5rem; border-radius: 50%; background-color: var(--emerald-400); display: inline-block; margin-right: 4px; }
+.dot { height: 0.5rem; width: 0.5rem; border-radius: 50%; background-color: var(--emerald-400); display: inline-block; margin-right: 4px; }
 
 h1 { font-size: 1.875rem; font-weight: 600; margin-top: 1rem; margin-bottom: 0.5rem; letter-spacing: -0.025em; }
 .desc { color: var(--slate-300); margin-bottom: 2rem; }
@@ -56,7 +56,18 @@ button:hover, .btn-wa:hover { background-color: var(--emerald-300); }
 .hidden { display: none; }
 
 /* Resultado Styles */
-.res-card { margin-top: 1.5rem; padding: 1.5rem; background: rgba(15, 23, 42, 0.6); border-radius: 1rem; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1); }
+.res-card {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: 1rem;
+  color: #FFFFFF;
+  border: 1px solid #00FFFF;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.5), inset 0 0 5px rgba(0, 255, 255, 0.2);
+}
+.res-card h2 { color: #FFFFFF; }
+.res-card strong { color: #FFFFFF; }
+.res-card p, .res-card ul { color: rgba(255, 255, 255, 0.9); }
 .res-badge { padding: 0.25rem 0.5rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
 .res-badge.nivel-medio { color: #ffcc00 !important; text-shadow: 0 0 8px rgba(255, 204, 0, 0.6), 0 0 12px rgba(255, 204, 0, 0.3); background-color: transparent !important; }
 .res-badge.nivel-alto { color: #ff3366 !important; text-shadow: 0 0 8px rgba(255, 51, 102, 0.6), 0 0 12px rgba(255, 51, 102, 0.3); background-color: transparent !important; }
