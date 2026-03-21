@@ -65,30 +65,39 @@
             <label>Motivo de consulta</label>
             <select name="dolorPrincipal" required>
               <option value="" selected disabled>Seleccione…</option>
-              <option value="multas_seniat">Gestión de multas y sanciones</option>
-              <option value="manejo_igtf">Gestión de IGTF</option>
-              <option value="retenciones_iva_islr">Retenciones de IVA/ISLR</option>
+              <option value="multas_intereses">Gestión de multas e intereses</option>
+              <option value="acompanamiento_fiscalizacion">Acompañamiento en procedimientos de fiscalización</option>
               <option value="auditoria_preventiva">Auditoría preventiva</option>
+              <option value="asesoria_puntual">Asesoría puntual</option>
             </select>
           </div>
 
           <div class="grid grid-cols-2">
             <div class="field-group">
-              <label>¿Máquinas fiscales actualizadas?</label>
-              <select name="maquinasFiscalesActualizadas" required>
+              <label>¿Libros legales y contables al día?</label>
+              <select name="librosAlDia" required>
                 <option value="" selected disabled>Seleccione…</option>
                 <option value="true">Sí</option>
                 <option value="false">No</option>
               </select>
             </div>
             <div class="field-group">
-              <label>¿Tiene fiscalización activa?</label>
-              <select name="fiscalizacionActiva" required>
+              <label>¿Declaraciones realizadas dentro del plazo?</label>
+              <select name="declaracionesEnPlazo" required>
                 <option value="" selected disabled>Seleccione…</option>
                 <option value="true">Sí</option>
                 <option value="false">No</option>
               </select>
             </div>
+          </div>
+
+          <div class="field-group">
+            <label>¿Tiene fiscalización activa?</label>
+            <select name="fiscalizacionActiva" required>
+              <option value="" selected disabled>Seleccione…</option>
+              <option value="true">Sí</option>
+              <option value="false">No</option>
+            </select>
           </div>
 
           <div style="display: flex; flex-direction: column; gap: 1rem; align-items: flex-start; margin-top: 1rem;">
@@ -137,19 +146,37 @@
         }
 
         function procesarCuestionario(resp) {
-          let score = 0; const factores = [];
+          let score = 0; 
+          const factores = [];
           const ingresos = Number(resp.ingresosMensuales);
 
-          if (resp.tipoSujeto === TIPO_SUJETO_CONST.CONTRIBUYENTE_ESPECIAL) { score += 35; factores.push('Contribuyente especial'); }
-          else if (resp.tipoSujeto === TIPO_SUJETO_CONST.PYME) { score += 20; factores.push('Pyme'); }
+          // Riesgo por Sujeto
+          if (resp.tipoSujeto === 'contribuyente_especial') { score += 30; factores.push('Contribuyente especial'); }
           
-          if (ingresos >= 5000) { score += 20; factores.push('Ingresos altos'); }
-          if (resp.maquinasFiscalesActualizadas === false) { score += 25; factores.push('Máquinas no actualizadas'); }
+          // REGLA DE ORO: Ingresos altos >= 5000 aseguran nivel MEDIO o superior
+          if (ingresos >= 5000) { 
+            score += 45; 
+            factores.push('Ingresos altos (Riesgo base)'); 
+          }
+
+          // Puntos de control nuevos
+          if (resp.librosAlDia === false) { score += 20; factores.push('Libros desactualizados'); }
+          if (resp.declaracionesEnPlazo === false) { score += 20; factores.push('Retraso en declaraciones'); }
           if (resp.fiscalizacionActiva === true) { score += 40; factores.push('Fiscalización activa'); }
 
           const puntaje = Math.min(100, score);
-          let nivel = puntaje >= 70 ? 'crítico' : puntaje >= 50 ? 'alto' : puntaje >= 30 ? 'medio' : 'bajo';
-          return { puntaje, nivel, factores, respuestas: { ...resp, ingresosMensuales: ingresos } };
+          let nivel = puntaje >= 80 ? 'crítico' : puntaje >= 65 ? 'alto' : puntaje >= 45 ? 'medio' : 'bajo';
+          
+          // Retornamos puntaje Y score para matar el error de undefined
+          return { 
+            puntaje, 
+            score: puntaje, 
+            scoreRiesgo: puntaje, // Compatibilidad extra
+            nivel, 
+            nivelRiesgo: nivel,   // Compatibilidad extra
+            factores, 
+            respuestas: { ...resp, ingresosMensuales: ingresos } 
+          };
         }
 
         const form = document.getElementById('tributos-form');
@@ -176,16 +203,13 @@
             ubicacion: form.elements.ubicacion.value,
             ingresosMensuales: form.elements.ingresosMensuales.value,
             dolorPrincipal: form.elements.dolorPrincipal.value,
-            maquinasFiscalesActualizadas: form.elements.maquinasFiscalesActualizadas.value === 'true',
+            librosAlDia: form.elements.librosAlDia.value === 'true',
+            declaracionesEnPlazo: form.elements.declaracionesEnPlazo.value === 'true',
             fiscalizacionActiva: form.elements.fiscalizacionActiva.value === 'true'
           });
 
-          const esVip = diag.respuestas.tipoSujeto === TIPO_SUJETO_CONST.CONTRIBUYENTE_ESPECIAL || diag.respuestas.ingresosMensuales > UMBRAL_INGRESOS_VIP;
-          
-          // Generar HTML del resultado usando la función de logic.web.js
-          const resultadoHTML = generarHTMLResultado(diag, esVip, rifVal.rifFormateado);
-          
-          container.innerHTML = resultadoHTML;
+          const esVip = diag.respuestas.tipoSujeto === 'contribuyente_especial' || diag.respuestas.ingresosMensuales > 10000;
+          container.innerHTML = generarHTMLResultado(diag, esVip, rifVal.rifFormateado);
         });
       </script>
     </main>

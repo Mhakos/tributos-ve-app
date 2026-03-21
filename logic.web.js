@@ -12,10 +12,10 @@ export const UBICACION = {
 };
 
 export const DOLOR_PRINCIPAL = {
-  MULTAS_SENIAT: 'multas_seniat',
-  MANEJO_IGTF: 'manejo_igtf',
-  RETENCIONES_IVA_ISLR: 'retenciones_iva_islr',
-  AUDITORIA_PREVENTIVA: 'auditoria_preventiva'
+  MULTAS_INTERESES: 'multas_intereses',
+  ACOMPANAMIENTO_FISCALIZACION: 'acompanamiento_fiscalizacion',
+  AUDITORIA_PREVENTIVA: 'auditoria_preventiva',
+  ASESORIA_PUNTUAL: 'asesoria_puntual'
 };
 
 export const NIVEL_RIESGO = {
@@ -25,7 +25,7 @@ export const NIVEL_RIESGO = {
   CRITICO: 'critico'
 };
 
-export const UMBRAL_INGRESOS_VIP = 5000;
+export const UMBRAL_INGRESOS_VIP = 10000;
 
 const RIF_LETRAS_VALIDAS = ['V', 'E', 'J', 'P', 'G'];
 const RIF_VALORES_LETRA = { V: 4, E: 8, J: 12, P: 16, G: 20 };
@@ -79,96 +79,61 @@ function formatearRIF(rif) {
 export function procesarCuestionario(respuestas) {
   const {
     tipoSujeto,
-    ubicacion,
     ingresosMensuales,
-    dolorPrincipal,
-    maquinasFiscalesActualizadas,
+    librosAlDia,
+    declaracionesEnPlazo,
     fiscalizacionActiva
   } = respuestas;
 
-  if (!tipoSujeto || !ubicacion || ingresosMensuales === undefined || ingresosMensuales === null || ingresosMensuales === '') {
-    throw new Error('Faltan campos obligatorios del cuestionario');
-  }
-
   const ingresos = Number(ingresosMensuales);
-  if (!Number.isFinite(ingresos) || ingresos < 0) {
-    throw new Error('Ingresos mensuales inválidos');
-  }
-
-  let scoreRiesgo = 0;
+  let score = 0;
   const factores = [];
 
-  if (tipoSujeto === TIPO_SUJETO.CONTRIBUYENTE_ESPECIAL) {
-    scoreRiesgo += 35;
-    factores.push('Contribuyente Especial (alta exposición SENIAT)');
-  } else if (tipoSujeto === TIPO_SUJETO.PYME) {
-    scoreRiesgo += 20;
-    factores.push('Pyme (obligaciones tributarias medias)');
-  } else {
-    scoreRiesgo += 5;
-    factores.push('Persona Natural (menor complejidad)');
+  // 1. Tipo de Sujeto
+  if (tipoSujeto === 'contribuyente_especial') { 
+    score += 30; 
+    factores.push('Contribuyente especial'); 
+  } else if (tipoSujeto === 'pyme') { 
+    score += 15; 
+    factores.push('Pyme'); 
+  }
+  
+  // 2. Lógica de Ingresos
+  if (ingresos >= 5000) { 
+    score += 45; 
+    factores.push('Ingresos altos (Nivel de riesgo base)'); 
   }
 
-  if (ubicacion === UBICACION.CARACAS) scoreRiesgo += 5;
-  factores.push(`Ubicación: ${ubicacion}`);
-
-  if (ingresos >= 20000) {
-    scoreRiesgo += 30;
-    factores.push('Ingresos altos (>$20k - cuenta grande)');
-  } else if (ingresos >= 5000) {
-    scoreRiesgo += 20;
-    factores.push('Ingresos medios-altos ($5k-$20k)');
-  } else if (ingresos >= 1000) {
-    scoreRiesgo += 10;
-    factores.push('Ingresos medios ($1k-$5k)');
-  } else {
-    scoreRiesgo += 2;
-    factores.push('Ingresos bajos (<$1k)');
+  // 3. Nuevos puntos de control
+  if (librosAlDia === false) { 
+    score += 20; 
+    factores.push('Libros legales/contables desactualizados'); 
+  }
+  if (declaracionesEnPlazo === false) { 
+    score += 20; 
+    factores.push('Declaraciones fuera de plazo'); 
   }
 
-  switch (dolorPrincipal) {
-    case DOLOR_PRINCIPAL.MULTAS_SENIAT:
-      scoreRiesgo += 25;
-      factores.push('Multas del SENIAT (problema activo)');
-      break;
-    case DOLOR_PRINCIPAL.MANEJO_IGTF:
-      scoreRiesgo += 15;
-      factores.push('Manejo de IGTF');
-      break;
-    case DOLOR_PRINCIPAL.RETENCIONES_IVA_ISLR:
-      scoreRiesgo += 20;
-      factores.push('Retenciones IVA/ISLR');
-      break;
-    case DOLOR_PRINCIPAL.AUDITORIA_PREVENTIVA:
-      scoreRiesgo += 10;
-      factores.push('Auditoría preventiva (proactivo)');
-      break;
-    default:
-      scoreRiesgo += 5;
+  // 4. Fiscalización Activa
+  if (fiscalizacionActiva === true) { 
+    score += 40; 
+    factores.push('Procedimiento de fiscalización en curso'); 
   }
 
-  if (!maquinasFiscalesActualizadas) {
-    scoreRiesgo += 25;
-    factores.push('Máquinas fiscales NO actualizadas (riesgo de sanciones)');
-  } else {
-    factores.push('Máquinas fiscales actualizadas');
-  }
-
-  if (fiscalizacionActiva) {
-    scoreRiesgo += 40;
-    factores.push('⚠️ FISCALIZACIÓN ACTIVA - Urgencia máxima');
-  } else {
-    factores.push('Sin fiscalización activa');
-  }
-
-  const scoreNormalizado = Math.min(100, scoreRiesgo);
-  let nivelRiesgo;
-  if (scoreNormalizado >= 70) nivelRiesgo = NIVEL_RIESGO.CRITICO;
-  else if (scoreNormalizado >= 50) nivelRiesgo = NIVEL_RIESGO.ALTO;
-  else if (scoreNormalizado >= 30) nivelRiesgo = NIVEL_RIESGO.MEDIO;
-  else nivelRiesgo = NIVEL_RIESGO.BAJO;
-
-  return { scoreRiesgo: scoreNormalizado, nivelRiesgo, factores, respuestas: { ...respuestas, ingresosMensuales: ingresos } };
+  const puntajeFinal = Math.min(100, score);
+  let nivel = puntajeFinal >= 80 ? NIVEL_RIESGO.CRITICO : 
+              puntajeFinal >= 65 ? NIVEL_RIESGO.ALTO : 
+              puntajeFinal >= 45 ? NIVEL_RIESGO.MEDIO : NIVEL_RIESGO.BAJO;
+  
+  return { 
+    puntaje: puntajeFinal, 
+    score: puntajeFinal,
+    scoreRiesgo: puntajeFinal,
+    nivel: nivel, 
+    nivelRiesgo: nivel,
+    factores: factores, 
+    respuestas: { ...respuestas, ingresosMensuales: ingresos } 
+  };
 }
 
 export function checkVipStatus(resultado) {
@@ -230,17 +195,17 @@ export async function registrarLeadWeb(leadData, { db } = {}) {
 }
 
 export function generarHTMLResultado(diagnostico, esVip, rifFormateado) {
-  const nivel = diagnostico.nivelRiesgo;
-  const puntaje = diagnostico.scoreRiesgo;
+  const nivel = diagnostico.nivel || diagnostico.nivelRiesgo;
+  const puntaje = diagnostico.score !== undefined ? diagnostico.score : (diagnostico.scoreRiesgo !== undefined ? diagnostico.scoreRiesgo : diagnostico.puntaje);
   const factores = diagnostico.factores;
   
   // Determinar clase CSS para el badge según nivel
   let badgeCls = 'bg-rose-400'; // crítico por defecto
-  if (nivel === NIVEL_RIESGO.ALTO) {
+  if (nivel === NIVEL_RIESGO.ALTO || nivel === 'alto') {
     badgeCls = 'bg-amber-300 nivel-alto';
-  } else if (nivel === NIVEL_RIESGO.MEDIO) {
+  } else if (nivel === NIVEL_RIESGO.MEDIO || nivel === 'medio') {
     badgeCls = 'bg-emerald-300 nivel-medio';
-  } else if (nivel === NIVEL_RIESGO.BAJO) {
+  } else if (nivel === NIVEL_RIESGO.BAJO || nivel === 'bajo') {
     badgeCls = 'bg-emerald-300';
   }
 
@@ -258,15 +223,12 @@ export function generarHTMLResultado(diagnostico, esVip, rifFormateado) {
     </div>
   ` : '';
 
-  // Estilo condicional para el badge (color del texto según nivel)
-  const badgeStyle = (nivel !== NIVEL_RIESGO.MEDIO && nivel !== NIVEL_RIESGO.ALTO) ? 'style="color:#020617"' : '';
-
   // HTML final del resultado
   const html = `
     <div class="res-card">
       <div style="display:flex; justify-content:space-between; align-items:center;">
         <h2 style="margin:0; font-size:1.25rem;">Resultado</h2>
-        <span class="res-badge ${badgeCls}" ${badgeStyle}>${nivel}</span>
+        <span class="res-badge nivel-texto ${badgeCls}">${nivel}</span>
       </div>
       <p style="font-size:0.875rem; color:var(--slate-300);">Puntaje de riesgo: <strong>${puntaje}</strong></p>
       <ul style="font-size:0.875rem; color:var(--slate-400);">${factores.map(f => `<li>${f}</li>`).join('')}</ul>
