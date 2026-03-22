@@ -3,193 +3,187 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Diagnóstico Tributario Profesional</title>
+    <title>Sistema de Gestión Tributaria - Mhakos</title>
     <style>
         :root {
-            --bg-color: #020617; --accent-color: #00f3ff; --text-color: #f8fafc;
-            --error-color: #ef4444; --success-color: #22c55e;
-            --input-bg: rgba(15, 23, 42, 0.8);
+            --bg: #020617; --neon: #00f3ff; --card-bg: rgba(15, 23, 42, 0.95);
+            --text: #f8fafc; --error: #ef4444; --success: #22c55e;
         }
         body {
-            margin: 0; font-family: 'Segoe UI', Roboto, sans-serif;
-            background-color: var(--bg-color); color: var(--text-color);
-            display: flex; justify-content: center; align-items: flex-start; min-height: 100vh;
+            margin: 0; font-family: 'Inter', sans-serif;
+            background-color: var(--bg); color: var(--text);
+            display: flex; justify-content: center; padding: 20px;
         }
-        .container { width: 100%; max-width: 500px; padding: 20px; box-sizing: border-box; }
+        .container { width: 100%; max-width: 500px; }
         .card { 
-            background: var(--input-bg); padding: 30px; border-radius: 16px;
-            border: 1px solid rgba(0, 243, 255, 0.2); box-shadow: 0 0 20px rgba(0, 243, 255, 0.1);
-            transition: opacity 0.4s ease;
+            background: var(--card-bg); padding: 25px; border-radius: 20px;
+            border: 1px solid rgba(0, 243, 255, 0.3); box-shadow: 0 0 30px rgba(0, 243, 255, 0.1);
         }
-        h1 { color: var(--accent-color); text-align: center; font-size: 24px; margin-bottom: 10px; }
-        p.desc { text-align: center; color: #94a3b8; font-size: 14px; margin-bottom: 25px; }
+        h1 { color: var(--neon); text-align: center; font-size: 22px; margin-bottom: 20px; }
         
-        .field-group { margin-bottom: 20px; position: relative; }
-        label { display: block; margin-bottom: 8px; font-size: 14px; font-weight: 500; }
+        /* Formulario */
+        .field { margin-bottom: 15px; }
+        label { display: block; font-size: 13px; margin-bottom: 6px; color: #94a3b8; }
         input {
-            width: 100%; padding: 12px; background: var(--bg-color); border: 1px solid #334155;
-            border-radius: 8px; color: white; box-sizing: border-box; font-size: 16px;
+            width: 100%; padding: 12px; background: #000; border: 1px solid #334155;
+            border-radius: 10px; color: white; box-sizing: border-box; font-size: 15px;
         }
-        input:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 0 10px rgba(0, 243, 255, 0.2); }
-        .error-txt { color: var(--error-color); font-size: 12px; margin-top: 5px; display: none; }
+        .err { color: var(--error); font-size: 11px; margin-top: 4px; display: none; }
         
-        button {
-            width: 100%; padding: 14px; border-radius: 8px; border: none; font-weight: bold;
-            cursor: pointer; transition: 0.3s; font-size: 16px; margin-bottom: 10px;
+        /* Botones */
+        button, .btn-link {
+            width: 100%; padding: 14px; border-radius: 10px; border: none; font-weight: bold;
+            cursor: pointer; transition: 0.3s; margin-top: 10px; font-size: 15px; text-align: center;
         }
-        #btn-iniciar { background: var(--accent-color); color: #020617; }
-        #btn-iniciar:disabled { background: #1e293b; color: #64748b; cursor: not-allowed; }
+        .btn-main { background: var(--neon); color: #020617; }
+        .btn-main:disabled { background: #1e293b; color: #64748b; cursor: not-allowed; }
+        .btn-opt { background: #1e293b; color: white; border: 1px solid #334155; }
+        .btn-opt:hover { border-color: var(--neon); }
         
-        .pregunta-card { text-align: center; }
-        .btn-opcion { background: #1e293b; color: white; border: 1px solid #334155; }
-        .btn-opcion:hover { border-color: var(--accent-color); background: rgba(0, 243, 255, 0.05); }
-        
-        .hidden { display: none; opacity: 0; }
-        .visible { display: block; opacity: 1; }
+        /* Calculadora Estilo Original */
+        .calc-display {
+            background: rgba(0, 0, 0, 0.4); padding: 20px; border-radius: 12px;
+            margin: 20px 0; border: 1px dashed var(--neon); text-align: center;
+        }
+        .multa-monto { font-size: 32px; font-weight: 800; color: var(--error); display: block; }
+        .ut-info { font-size: 12px; color: #94a3b8; margin-top: 5px; }
 
-        .resultado-box { text-align: center; padding: 20px; border-radius: 12px; background: rgba(255,255,255,0.03); }
-        .nivel-riesgo { font-size: 28px; font-weight: 800; margin: 15px 0; text-transform: uppercase; }
-        .btn-wa { background: var(--success-color); color: white; text-decoration: none; display: block; padding: 15px; border-radius: 8px; margin-top: 20px; }
-        .btn-restart { background: transparent; color: #94a3b8; border: 1px solid #334155; margin-top: 15px; }
+        .hidden { display: none; }
+        .visible { display: block; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .btn-wa { background: var(--success); color: white; text-decoration: none; display: block; }
     </style>
 </head>
 <body>
     <div class="container">
         <div id="fase1" class="card visible">
             <h1>Diagnóstico Tributario</h1>
-            <p class="desc">Complete los datos para iniciar la evaluación preventiva.</p>
-            
-            <div class="field-group">
+            <div class="field">
                 <label>Empresa / Nombre Completo</label>
-                <input type="text" id="nombre" placeholder="Ej: Inversiones ABC, C.A.">
-                <div id="err-nombre" class="error-txt">El nombre de la empresa es obligatorio.</div>
+                <input type="text" id="nombre" placeholder="Ej: Corporación ABC, C.A.">
+                <div id="e-nom" class="err">Nombre obligatorio.</div>
             </div>
-
-            <div class="field-group">
-                <label>RIF (Formato: J-12345678-0)</label>
-                <input type="text" id="rif" placeholder="J-12345678-0">
-                <div id="err-rif" class="error-txt">Formato de RIF incorrecto (Ej: J-12345678-0).</div>
+            <div class="field">
+                <label>RIF (Ej: J-12345678-0)</label>
+                <input type="text" id="rif" placeholder="J-00000000-0">
+                <div id="e-rif" class="err">Formato de RIF inválido.</div>
             </div>
-
-            <div class="field-group">
+            <div class="field">
                 <label>Correo Electrónico</label>
                 <input type="email" id="correo" placeholder="gerencia@empresa.com">
-                <div id="err-correo" class="error-txt">Ingrese un correo electrónico válido.</div>
+                <div id="e-cor" class="err">Ingrese un correo válido.</div>
             </div>
-
-            <button id="btn-iniciar" disabled>INICIAR DIAGNÓSTICO</button>
+            <button id="btn-go" class="btn-main" disabled>INICIAR EVALUACIÓN</button>
         </div>
 
         <div id="fase2" class="card hidden">
-            <div id="pregunta-cont" class="pregunta-card">
-                <p id="progreso" style="color: var(--accent-color); font-size: 12px; font-weight: bold;"></p>
-                <h2 id="texto-pregunta" style="font-size: 20px; margin: 20px 0;"></h2>
-                <button class="btn-opcion" onclick="responder(0)">SÍ</button>
-                <button class="btn-opcion" onclick="responder(20)">NO</button>
-                <button class="btn-opcion" onclick="responder(20)">NO SÉ</button>
-            </div>
+            <p id="step" style="text-align:center; color: var(--neon); font-weight:bold;"></p>
+            <h2 id="q-text" style="text-align:center; font-size: 18px; margin: 20px 0;"></h2>
+            <button class="btn-opt" onclick="ask(0)">SÍ, TODO EN ORDEN</button>
+            <button class="btn-opt" onclick="ask(20)">NO / TENGO DUDAS</button>
+            <button class="btn-opt" onclick="ask(20)">NO LO SÉ</button>
         </div>
 
         <div id="fase3" class="card hidden">
-            <div class="resultado-box">
-                <p>Nivel de Riesgo Detectado:</p>
-                <div id="nivel-txt" class="nivel-riesgo"></div>
-                <p id="desc-riesgo" style="font-size: 14px; color: #cbd5e1;"></p>
-                <button id="btn-whatsapp" class="btn-wa">SOLICITAR ASESORÍA ESPECIALIZADA</button>
-                <button onclick="location.reload()" class="btn-restart">Finalizar y volver al inicio</button>
+            <h1>Resultado del Análisis</h1>
+            <div style="text-align:center; margin-bottom:15px;">
+                Estatus: <span id="r-status" style="font-weight:bold; font-size:20px;"></span>
             </div>
+            
+            <div class="calc-display">
+                <span style="font-size: 14px; color: var(--neon);">MULTA ESTIMADA (ILÍCITOS)</span>
+                <span id="monto-bs" class="multa-monto">Bs. 0.00</span>
+                <div class="ut-info">Basado en <span id="cant-ut">0</span> UT (Valor UT: Bs. 9.00)</div>
+            </div>
+
+            <p id="r-desc" style="font-size:14px; text-align:center; color:#cbd5e1; line-height:1.5;"></p>
+            
+            <a id="wa-link" href="#" class="btn-link btn-wa" target="_blank">SOLICITAR ASESORÍA URGENTE</a>
+            <button onclick="location.reload()" style="background:transparent; color:#64748b; font-size:13px; text-decoration:underline;">Reiniciar y limpiar datos</button>
         </div>
     </div>
 
     <script>
-        const preguntas = [
-            "¿Sabes exactamente cuánto deberías estar pagando de impuestos este mes?",
-            "Si el SENIAT te fiscalizara mañana, ¿podrías presentar todos tus documentos en orden?",
-            "¿Tu negocio recibe o realiza pagos en divisas o plataformas (Zelle, Binance, etc.)?",
-            "¿Cuándo fue la última vez que un especialista externo revisó tu situación tributaria?",
-            "¿Tienes trabajadores y sabes si estás cumpliendo con el IVSS y el INCES?"
+        const qs = [
+            "¿Lleva sus Libros de Compra y Venta al día según normativa?",
+            "¿Emite facturas legales o usa máquina fiscal autorizada?",
+            "¿Declara el IVA y el ISLR dentro de los plazos legales?",
+            "¿Su Registro de Información Fiscal (RIF) está actualizado?",
+            "¿Maneja pagos en divisas (IGTF) y los reporta correctamente?"
         ];
 
-        let preguntaActual = 0;
-        let puntajeTotal = 0;
-        const inputs = {
-            nombre: document.getElementById('nombre'),
-            rif: document.getElementById('rif'),
-            correo: document.getElementById('correo')
+        let cur = 0, pts = 0;
+        const UT_VALOR = 9.00; // Valor de la UT que estaba en tu código de WordPress
+
+        // Validación de datos
+        const fields = {
+            n: document.getElementById('nombre'),
+            r: document.getElementById('rif'),
+            c: document.getElementById('correo')
         };
 
-        // Validaciones en tiempo real
-        function validar() {
-            const vNombre = inputs.nombre.value.trim().length > 2;
-            const vRif = /^[VEJG]-?\d{7,9}-?\d$/.test(inputs.rif.value.trim().toUpperCase());
-            const vCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inputs.correo.value.trim());
-
-            document.getElementById('err-nombre').style.display = (inputs.nombre.value && !vNombre) ? 'block' : 'none';
-            document.getElementById('err-rif').style.display = (inputs.rif.value && !vRif) ? 'block' : 'none';
-            document.getElementById('err-correo').style.display = (inputs.correo.value && !vCorreo) ? 'block' : 'none';
-
-            document.getElementById('btn-iniciar').disabled = !(vNombre && vRif && vCorreo);
+        function validate() {
+            const vN = fields.n.value.length > 3;
+            const vR = /^[VEJG]-?\d{7,9}-?\d$/.test(fields.r.value.trim().toUpperCase());
+            const vC = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fields.c.value);
+            
+            document.getElementById('e-nom').style.display = (fields.n.value && !vN) ? 'block' : 'none';
+            document.getElementById('e-rif').style.display = (fields.r.value && !vR) ? 'block' : 'none';
+            document.getElementById('e-cor').style.display = (fields.c.value && !vC) ? 'block' : 'none';
+            
+            document.getElementById('btn-go').disabled = !(vN && vR && vC);
         }
 
-        Object.values(inputs).forEach(input => input.addEventListener('input', validar));
+        Object.values(fields).forEach(f => f.addEventListener('input', validate));
 
-        document.getElementById('btn-iniciar').addEventListener('click', () => {
+        document.getElementById('btn-go').addEventListener('click', () => {
             document.getElementById('fase1').classList.replace('visible', 'hidden');
-            setTimeout(() => {
-                document.getElementById('fase2').classList.replace('hidden', 'visible');
-                mostrarPregunta();
-            }, 400);
+            document.getElementById('fase2').classList.replace('hidden', 'visible');
+            showQ();
         });
 
-        function mostrarPregunta() {
-            document.getElementById('progreso').innerText = `PREGUNTA ${preguntaActual + 1} DE 5`;
-            document.getElementById('texto-pregunta').innerText = preguntas[preguntaActual];
+        function showQ() {
+            document.getElementById('step').innerText = `PREGUNTA ${cur + 1} DE 5`;
+            document.getElementById('q-text').innerText = qs[cur];
         }
 
-        function responder(puntos) {
-            puntajeTotal += puntos;
-            preguntaActual++;
-            if (preguntaActual < preguntas.length) {
-                mostrarPregunta();
-            } else {
-                mostrarResultado();
-            }
+        function ask(p) {
+            pts += p;
+            cur++;
+            if (cur < qs.length) showQ();
+            else showFinal();
         }
 
-        function mostrarResultado() {
+        function showFinal() {
             document.getElementById('fase2').classList.replace('visible', 'hidden');
-            let riesgo = "BAJO";
-            let color = "#22c55e";
-            let desc = "Su situación parece estar bajo control, pero una revisión preventiva nunca está de más.";
-
-            if (puntajeTotal >= 80) { 
-                riesgo = "CRÍTICO"; color = "#ef4444"; 
-                desc = "Se han detectado inconsistencias graves que requieren atención inmediata para evitar sanciones.";
-            }
-            else if (puntajeTotal >= 40) { 
-                riesgo = "MODERADO"; color = "#f59e0b"; 
-                desc = "Existen vacíos de información que podrían generar multas en una fiscalización.";
-            }
-
-            const nivelTxt = document.getElementById('nivel-txt');
-            nivelTxt.innerText = riesgo;
-            nivelTxt.style.color = color;
-            document.getElementById('desc-riesgo').innerText = desc;
+            document.getElementById('fase3').classList.replace('hidden', 'visible');
             
-            setTimeout(() => document.getElementById('fase3').classList.replace('hidden', 'visible'), 400);
+            let status = "BAJO", col = "#22c55e", uts = 50;
+            let desc = "Su perfil presenta cumplimiento básico. Recomendamos auditoría preventiva.";
+
+            if (pts >= 80) { 
+                status = "CRÍTICO"; col = "#ef4444"; uts = 500;
+                desc = "RIESGO DE CLAUSURA. Se detectaron ilícitos graves que generan multas severas según el COT.";
+            } else if (pts >= 40) { 
+                status = "MODERADO"; col = "#f59e0b"; uts = 150;
+                desc = "Existen debilidades en su control tributario. Evite sanciones por deberes formales.";
+            }
+
+            // Aplicación de la lógica de tu calculadora
+            const totalBs = uts * UT_VALOR;
+            document.getElementById('r-status').innerText = status;
+            document.getElementById('r-status').style.color = col;
+            document.getElementById('monto-bs').innerText = `Bs. ${totalBs.toLocaleString('es-VE', {minimumFractionDigits: 2})}`;
+            document.getElementById('cant-ut').innerText = uts;
+            document.getElementById('r-desc').innerText = desc;
+
+            // WhatsApp
+            const as = ['584265112653', '584122089575'];
+            const a = as[Math.floor(Math.random() * as.length)];
+            const msj = `Hola! Soy ${fields.n.value}, RIF ${fields.r.value}. Mi diagnóstico dio RIESGO ${status} con una multa estimada de Bs. ${totalBs}. Necesito asesoría.`;
+            document.getElementById('wa-link').href = `https://wa.me/${a}?text=${encodeURIComponent(msj)}`;
         }
-
-        document.getElementById('btn-whatsapp').addEventListener('click', () => {
-            const asesores = ['584265112653', '584122089575'];
-            const asesor = asesores[Math.floor(Math.random() * asesores.length)];
-            const nom = inputs.nombre.value;
-            const id = inputs.rif.value.toUpperCase();
-            const rsg = document.getElementById('nivel-txt').innerText;
-            const mail = inputs.correo.value;
-            
-            const msj = `Hola! Mi nombre es ${nom}, RIF ${id}. Mi resultado en el diagnóstico es RIESGO ${rsg}. Mi correo es ${mail}. Necesito asesoría especializada urgente.`;
-            window.open(`https://wa.me/${asesor}?text=${encodeURIComponent(msj)}`, '_blank');
-        });
     </script>
 </body>
 </html>
