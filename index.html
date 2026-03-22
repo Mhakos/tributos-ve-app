@@ -4,13 +4,62 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Diagnóstico Tributario - Tributos a tu Alcance</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        /* ESTILOS VISUALES INCORPORADOS PARA QUE NUNCA FALLEN */
+        :root {
+            --slate-950: #020617; --slate-900: #0f172a; --slate-800: #1e293b;
+            --slate-700: #334155; --slate-400: #94a3b8; --slate-300: #cbd5e1;
+            --slate-200: #e2e8f0; --slate-100: #f1f5f9; --emerald-400: #34d399;
+            --emerald-300: #6ee7b7; --rose-400: #fb7185; --error-red: #fca5a5;
+        }
+
+        body {
+            margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+            background-color: var(--slate-950); color: var(--slate-100); min-height: 100vh;
+        }
+
+        .container { max-width: 48rem; margin: 0 auto; padding: 2.5rem 1rem; }
+
+        .card, .res-card {
+            background-color: rgba(15, 23, 42, 0.6); border-radius: 1rem; padding: 1.5rem;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1); backdrop-filter: blur(8px);
+        }
+
+        h1, h2 { font-size: 1.875rem; font-weight: 600; margin-top: 0; margin-bottom: 0.5rem; color: #ffffff; }
+        .desc { color: var(--slate-300); margin-bottom: 2rem; }
+
+        .field-group { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.25rem; }
+        label { font-size: 0.875rem; font-weight: 500; color: var(--slate-200); }
+
+        input {
+            background-color: rgba(2, 6, 23, 0.6); border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white; border-radius: 0.75rem; padding: 0.75rem 1rem; font-size: 1rem; width: 100%; box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+        input:focus { outline: 2px solid var(--emerald-400); border-color: transparent; }
+
+        .error-message { color: var(--error-red); font-size: 0.75rem; margin-top: 4px; display: none; font-weight: 500; }
+        
+        button, .btn-wa {
+            cursor: pointer; display: inline-flex; justify-content: center; align-items: center;
+            border-radius: 0.75rem; background-color: var(--emerald-400); padding: 0.75rem 1.25rem;
+            font-weight: 600; color: var(--slate-950); border: none; transition: 0.2s; text-decoration: none; width: 100%;
+            box-sizing: border-box; font-family: inherit;
+        }
+        button:hover:not(:disabled) { background-color: var(--emerald-300); }
+        button:disabled { background-color: var(--slate-700); color: var(--slate-400); cursor: not-allowed; opacity: 0.7; }
+
+        .btn-reset { background-color: transparent !important; color: #94a3b8 !important; border: 1px solid #334155 !important; margin-top: 15px; }
+        .btn-reset:hover { background-color: rgba(255,255,255,0.05) !important; color: white !important; }
+
+        .hidden { display: none !important; }
+    </style>
 </head>
 <body>
     <div class="container">
         <div id="form-screen" class="card">
             <h1>Diagnóstico de Riesgo</h1>
-            <p class="desc">Ingrese sus datos para una evaluación profesional sin emojis.</p>
+            <p class="desc">Ingrese sus datos para una evaluación profesional.</p>
             
             <div class="field-group">
                 <label for="name">Empresa / Nombre Completo</label>
@@ -40,6 +89,7 @@
             <button id="return-button" class="btn-reset">Finalizar y volver al inicio</button>
         </div>
     </div>
+    
     <script src="logic.web.js"></script>
 </body>
 </html>
