@@ -3,6 +3,7 @@
   --slate-700: #334155; --slate-400: #94a3b8; --slate-300: #cbd5e1;
   --slate-200: #e2e8f0; --slate-100: #f1f5f9; --emerald-400: #34d399;
   --emerald-300: #6ee7b7; --rose-400: #fb7185; --fuchsia-300: #d946ef;
+  --error-red: #fca5a5;
 }
 
 body {
@@ -12,71 +13,55 @@ body {
 
 .container { max-width: 48rem; margin: 0 auto; padding: 2.5rem 1rem; }
 
-/* Header & Badges */
-.badge {
-  display: inline-flex; align-items: center; gap: 0.5rem; border-radius: 9999px;
-  background-color: rgba(15, 23, 42, 0.7); padding: 0.25rem 0.75rem;
-  font-size: 0.75rem; color: var(--slate-300); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
-}
-.dot { height: 0.5rem; width: 0.5rem; border-radius: 50%; background-color: var(--emerald-400); display: inline-block; margin-right: 4px; }
-
-h1 { font-size: 1.875rem; font-weight: 600; margin-top: 1rem; margin-bottom: 0.5rem; letter-spacing: -0.025em; }
-.desc { color: var(--slate-300); margin-bottom: 2rem; }
-
-/* Form Card */
 .card {
   background-color: rgba(15, 23, 42, 0.6); border-radius: 1rem; padding: 1.5rem;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1); backdrop-filter: blur(8px);
 }
 
-.grid { display: grid; gap: 1rem; }
-@media (min-width: 640px) { .grid-cols-2 { grid-template-columns: repeat(2, 1fr); } }
-
 .field-group { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.25rem; }
 label { font-size: 0.875rem; font-weight: 500; color: var(--slate-200); }
 
-input, select {
+input {
   background-color: rgba(2, 6, 23, 0.6); border: 1px solid rgba(255, 255, 255, 0.1);
   color: white; border-radius: 0.75rem; padding: 0.75rem 1rem; font-size: 1rem; width: 100%; box-sizing: border-box;
+  transition: border-color 0.2s;
 }
-input:focus, select:focus { outline: 2px solid var(--emerald-400); border-color: transparent; }
-.hint { font-size: 0.75rem; color: var(--slate-400); margin-top: 0.25rem; }
 
-/* Buttons */
+input:focus { outline: 2px solid var(--emerald-400); border-color: transparent; }
+
+/* Estilos de Error */
+.error-message {
+  color: var(--error-red);
+  font-size: 0.75rem;
+  margin-top: 4px;
+  display: none; /* Oculto por defecto */
+}
+
+input.invalid { border-color: var(--rose-400); }
+
+/* Botones */
 button, .btn-wa {
   cursor: pointer; display: inline-flex; justify-content: center; align-items: center;
   border-radius: 0.75rem; background-color: var(--emerald-400); padding: 0.75rem 1.25rem;
-  font-weight: 500; color: var(--slate-950); border: none; transition: 0.2s; text-decoration: none;
-}
-button:hover, .btn-wa:hover { background-color: var(--emerald-300); }
-
-
-.error-message {
-    color: #fca5a5; /* Rojo suave (Red-300 equivalent) */
-    font-size: 0.75rem; /* Pequeño */
-    margin-top: 4px;
-    min-height: 1.2em; /* Reservar espacio */
+  font-weight: 600; color: var(--slate-950); border: none; transition: 0.2s; text-decoration: none; width: 100%;
 }
 
-.text-error { color: var(--rose-400); }
+button:hover:not(:disabled) { background-color: var(--emerald-300); }
+
+button:disabled {
+  background-color: var(--slate-700);
+  color: var(--slate-400);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+#return-button {
+  margin-top: 1rem;
+  background-color: transparent;
+  color: var(--slate-300);
+  border: 1px solid var(--slate-700);
+}
+
+#return-button:hover { background-color: rgba(255, 255, 255, 0.05); color: white; }
+
 .hidden { display: none; }
-
-/* Resultado Styles */
-.res-card {
-  margin-top: 1.5rem;
-  padding: 1.5rem;
-  background: rgba(15, 23, 42, 0.6);
-  border-radius: 1rem;
-  color: #FFFFFF;
-  border: 2px solid #00FFFF;
-  box-shadow: 0 0 10px rgba(0, 255, 255, 0.5), inset 0 0 5px rgba(0, 255, 255, 0.2);
-}
-.res-card h2 { color: #FFFFFF; }
-.res-card strong { color: #FFFFFF; }
-.res-card p, .res-card ul { color: rgba(255, 255, 255, 0.9); }
-.res-badge, .nivel-texto, [class*="desc"] { padding: 0.25rem 0.5rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: #FFFFFF !important; }
-.res-badge.nivel-medio { text-shadow: 0 0 8px rgba(255, 204, 0, 0.6), 0 0 12px rgba(255, 204, 0, 0.3); background-color: transparent !important; }
-.res-badge.nivel-alto { text-shadow: 0 0 8px rgba(255, 51, 102, 0.6), 0 0 12px rgba(255, 51, 102, 0.3); background-color: transparent !important; }
-.vip-section { margin-top: 1.25rem; padding: 1rem; background: rgba(217, 70, 239, 0.1); border: 1px solid rgba(217, 70, 239, 0.3); border-radius: 0.75rem; }
-.btn-reset { margin-top: 1rem; background-color: rgba(255, 255, 255, 0.1); color: var(--slate-100); border: 1px solid rgba(255, 255, 255, 0.3); cursor: pointer; padding: 0.75rem 1.25rem; border-radius: 0.75rem; font-weight: 500; transition: 0.2s; }
-.btn-reset:hover { background-color: rgba(255, 255, 255, 0.2); }
