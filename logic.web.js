@@ -210,7 +210,18 @@ export function generarHTMLResultado(diagnostico, esVip, rifFormateado) {
   }
 
   // Mensaje para WhatsApp
-  const msgVip = encodeURIComponent(`Hola Tributos a tu Alcance, mi RIF es ${rifFormateado} y mi diagnóstico es ${nivel}. Necesito asesoría.`);
+  let mensajeBase = "";
+  const upperNivel = (nivel || "").toUpperCase();
+  
+  if (upperNivel === "CRITICO" || upperNivel === "CRÍTICO") {
+    mensajeBase = `Hola! Mi nombre es [NOMBRE], RIF ${rifFormateado}. Mi resultado en el diagnóstico es RIESGO CRÍTICO. Mi correo es [EMAIL]. Necesito asesoría especializada urgente.`;
+  } else if (upperNivel === "ALTO" || upperNivel === "MEDIO" || upperNivel === "MODERADO") {
+    mensajeBase = `Hola! Mi nombre es [NOMBRE], RIF ${rifFormateado}. Mi resultado en el diagnóstico es RIESGO MODERADO. Mi correo es [EMAIL]. Quisiera agendar una revisión de mis controles tributarios.`;
+  } else {
+    mensajeBase = `Hola! Mi nombre es [NOMBRE], RIF ${rifFormateado}. Mi resultado en el diagnóstico es RIESGO BAJO. Mi correo es [EMAIL]. Quisiera conocer sus servicios de mantenimiento y asesoría mensual.`;
+  }
+
+  const msgVip = encodeURIComponent(mensajeBase);
 
   // HTML de botones de asesores (solo si es VIP)
   const asesoresHTML = esVip ? `
