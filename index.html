@@ -259,16 +259,19 @@
             <div class="input-group">
                 <label>Empresa / Nombre Completo</label>
                 <input type="text" id="userName" placeholder="Ej: Corporación Ejemplo C.A." autocomplete="organization">
+                <span id="nameError" class="error-message"></span>
             </div>
 
             <div class="input-group">
                 <label>RIF (Formato: J-00000000-0)</label>
                 <input type="text" id="userRIF" placeholder="J-12345678-9" maxlength="12">
+                <span id="rifError" class="error-message"></span>
             </div>
 
             <div class="input-group">
                 <label>Correo Electrónico</label>
                 <input type="email" id="userEmail" placeholder="correo@ejemplo.com" autocomplete="email">
+                <span id="emailError" class="error-message"></span>
             </div>
 
             <button id="startBtn" class="btn btn-primary" disabled style="margin-top: 10px;">
@@ -292,7 +295,15 @@
         <div id="phase3" class="step">
             <div class="result-container">
                 <p style="color: #94a3b8; font-size: 1.1rem;">Nivel de Riesgo Detectado:</p>
-                <div id="riskLabel" class="risk-badge">CRÍTICO</div>
+                        <div id="riskLabel" class="risk-badge">CRÍTICO</div>
+                <p id="riskDesc" style="font-size: 0.95rem; line-height: 1.5; margin-bottom: 10px;"></p>
+                
+                <a href="#" id="waLink" target="_blank" class="btn btn-whatsapp">
+                    SOLICITAR ASESORÍA
+                </a>
+                <a href="#" id="backToStartBtn" class="btn-back-to-start">
+                    ← Volver a intentar / Inicio
+                </a>
                 <p id="riskDesc" style="font-size: 0.95rem; line-height: 1.5; margin-bottom: 10px;"></p>
                 
                 <a href="#" id="waLink" target="_blank" class="btn btn-whatsapp">
