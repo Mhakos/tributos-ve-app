@@ -1,217 +1,441 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tributos al Alcance · Diagnóstico</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <main class="container">
-      <header>
-        <div class="badge"><span class="dot"></span> Diagnóstico tributario</div>
-        <h1>Test de Tributos</h1>
-        <p class="desc">Completa el formulario para obtener tu diagnóstico de riesgo inmediato.</p>
-      </header>
-
-      <section id="tributos-form-container" class="card">
-        <form id="tributos-form">
-          <div class="grid grid-cols-2">
-            <div class="field-group">
-              <label>Nombre</label>
-              <input name="nombre" type="text" required placeholder="Ej: María González" />
-            </div>
-            <div class="field-group">
-              <label>Teléfono</label>
-              <input name="telefono" type="tel" required placeholder="0412 5551234" />
-              <p class="hint">Formatos: +58 o 04xx.</p>
-            </div>
-          </div>
-
-          <div class="field-group">
-            <label>RIF (obligatorio)</label>
-            <input name="rif" type="text" required placeholder="V-12345678-1" />
-            <p class="hint">Ejemplo: J-12345678-9</p>
-          </div>
-
-          <div class="grid grid-cols-2">
-            <div class="field-group">
-              <label>Tipo de sujeto</label>
-              <select name="tipoSujeto" required>
-                <option value="" selected disabled>Seleccione…</option>
-                <option value="persona_natural">Persona natural</option>
-                <option value="pyme">Pyme</option>
-                <option value="contribuyente_especial">Contribuyente especial</option>
-              </select>
-            </div>
-            <div class="field-group">
-              <label>Ubicación</label>
-              <select name="ubicacion" required>
-                <option value="" selected disabled>Seleccione…</option>
-                <option value="caracas">Caracas</option>
-                <option value="valencia">Valencia</option>
-                <option value="maracaibo">Maracaibo</option>
-                <option value="resto_pais">Resto del país</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="field-group">
-            <label>Ingresos mensuales (USD)</label>
-            <input name="ingresosMensuales" type="number" min="0" step="1" required placeholder="Ej: 5000" />
-          </div>
-
-          <div class="field-group">
-            <label>Motivo de consulta</label>
-            <select name="dolorPrincipal" required>
-              <option value="" selected disabled>Seleccione…</option>
-              <option value="multas_intereses">Gestión de multas e intereses</option>
-              <option value="acompanamiento_fiscalizacion">Acompañamiento en procedimientos de fiscalización</option>
-              <option value="auditoria_preventiva">Auditoría preventiva</option>
-              <option value="asesoria_puntual">Asesoría puntual</option>
-            </select>
-          </div>
-
-          <div class="grid grid-cols-2">
-            <div class="field-group">
-              <label>¿Libros legales y contables al día?</label>
-              <select name="librosAlDia" required>
-                <option value="" selected disabled>Seleccione…</option>
-                <option value="true">Sí</option>
-                <option value="false">No</option>
-              </select>
-            </div>
-            <div class="field-group">
-              <label>¿Declaraciones realizadas dentro del plazo?</label>
-              <select name="declaracionesEnPlazo" required>
-                <option value="" selected disabled>Seleccione…</option>
-                <option value="true">Sí</option>
-                <option value="false">No</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="field-group">
-            <label>¿Tiene fiscalización activa?</label>
-            <select name="fiscalizacionActiva" required>
-              <option value="" selected disabled>Seleccione…</option>
-              <option value="true">Sí</option>
-              <option value="false">No</option>
-            </select>
-          </div>
-
-          <div style="display: flex; flex-direction: column; gap: 1rem; align-items: flex-start; margin-top: 1rem;">
-            <button type="submit">Terminar test</button>
-            <p id="form-status" class="status" aria-live="polite"></p>
-          </div>
-        </form>
-      </section>
-
-      <script type="module">
-        import { generarHTMLResultado, NIVEL_RIESGO, TIPO_SUJETO, UMBRAL_INGRESOS_VIP } from './logic.web.js';
-
-        const TIPO_SUJETO_CONST = { PERSONA_NATURAL: 'persona_natural', PYME: 'pyme', CONTRIBUYENTE_ESPECIAL: 'contribuyente_especial' };
-        const RIF_LETRAS_VALIDAS = ['V', 'E', 'J', 'P', 'G'];
-        const RIF_VALORES_LETRA = { V: 4, E: 8, J: 12, P: 16, G: 20 };
-        const RIF_FACTORES = [0, 3, 2, 7, 6, 5, 4, 3, 2];
-
-        function formatearRIF(rif) {
-          const limpio = String(rif || '').replace(/\s|-/g, '').toUpperCase();
-          if (limpio.length < 10) return limpio;
-          return `${limpio[0]}-${limpio.slice(1, 9)}-${limpio.slice(-1)}`;
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Diagnóstico Tributario Profesional</title>
+    <style>
+        :root {
+            --bg-color: #020617;
+            --accent-color: #00f3ff;
+            --text-color: #f8fafc;
+            --error-color: #ef4444;
+            --success-color: #22c55e;
+            --input-bg: rgba(15, 23, 42, 0.8);
         }
 
-        function validarRIF(rif) {
-          if (!rif || typeof rif !== 'string') return { valido: false, mensaje: 'RIF inválido.' };
-          const normalizado = rif.replace(/\s|-/g, '').toUpperCase();
-          if (normalizado.length < 9 || normalizado.length > 10) return { valido: false, mensaje: 'RIF inválido.' };
-          const letra = normalizado[0];
-          if (!RIF_LETRAS_VALIDAS.includes(letra)) return { valido: false, mensaje: 'Letra inicial inválida.' };
-          const digitos = normalizado.slice(1, 9);
-          if (!/^\d{8}$/.test(digitos)) return { valido: false, mensaje: 'Debe contener 8 números.' };
-          let suma = RIF_VALORES_LETRA[letra];
-          for (let i = 0; i < 8; i++) suma += RIF_FACTORES[i + 1] * parseInt(digitos[i], 10);
-          let dV = 11 - (suma % 11);
-          if (dV >= 10) dV = 0;
-          const rifEsperado = `${letra}${digitos}${dV}`;
-          if (normalizado.length === 10 && normalizado !== rifEsperado) return { valido: false, mensaje: `Inválido. Ejemplo: ${formatearRIF(rifEsperado)}` };
-          return { valido: true, rifFormateado: formatearRIF(rifEsperado) };
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
         }
 
-        function normalizarTelefonoVE(input) {
-          const digits = String(input || '').replace(/\D/g, '');
-          if (digits.length === 12 && digits.startsWith('58')) return `+${digits}`;
-          if (digits.length === 11 && digits.startsWith('04')) return `+58${digits.slice(1)}`;
-          return null;
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            padding: 10px;
         }
 
-        function procesarCuestionario(resp) {
-          let score = 0; 
-          const factores = [];
-          const ingresos = Number(resp.ingresosMensuales);
-
-          // Riesgo por Sujeto
-          if (resp.tipoSujeto === 'contribuyente_especial') { score += 30; factores.push('Contribuyente especial'); }
-          
-          // REGLA DE ORO: Ingresos altos >= 5000 aseguran nivel MEDIO o superior
-          if (ingresos >= 5000) { 
-            score += 45; 
-            factores.push('Ingresos altos (Riesgo base)'); 
-          }
-
-          // Puntos de control nuevos
-          if (resp.librosAlDia === false) { score += 20; factores.push('Libros desactualizados'); }
-          if (resp.declaracionesEnPlazo === false) { score += 20; factores.push('Retraso en declaraciones'); }
-          if (resp.fiscalizacionActiva === true) { score += 40; factores.push('Fiscalización activa'); }
-
-          const puntaje = Math.min(100, score);
-          let nivel = puntaje >= 80 ? 'crítico' : puntaje >= 65 ? 'alto' : puntaje >= 45 ? 'medio' : 'bajo';
-          
-          // Retornamos puntaje Y score para matar el error de undefined
-          return { 
-            puntaje, 
-            score: puntaje, 
-            scoreRiesgo: puntaje, // Compatibilidad extra
-            nivel, 
-            nivelRiesgo: nivel,   // Compatibilidad extra
-            factores, 
-            respuestas: { ...resp, ingresosMensuales: ingresos } 
-          };
+        #app-container {
+            width: 100%;
+            max-width: 480px;
+            min-height: 500px;
+            max-height: 600px;
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            border-radius: 20px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.05);
         }
 
-        const form = document.getElementById('tributos-form');
-        const statusEl = document.getElementById('form-status');
-        const container = document.getElementById('tributos-form-container');
-
-        function setStatus(text, kind) {
-          statusEl.className = `status ${kind === 'error' ? 'text-error' : kind === 'success' ? 'text-success' : ''}`;
-          statusEl.textContent = text || '';
+        .step {
+            display: none;
+            flex-direction: column;
+            gap: 20px;
+            animation: fadeEffect 0.5s ease-out;
+            height: 100%;
+            flex-grow: 1;
         }
 
-        form.addEventListener('submit', (e) => {
-          e.preventDefault();
-          const telNormalizado = normalizarTelefonoVE(form.elements.telefono.value);
-          const rifVal = validarRIF(form.elements.rif.value);
+        .step.active {
+            display: flex;
+        }
 
-          if (!telNormalizado || !rifVal.valido) {
-            setStatus(rifVal.mensaje || 'Revise teléfono o RIF.', 'error');
-            return;
-          }
+        @keyframes fadeEffect {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
 
-          const diag = procesarCuestionario({
-            tipoSujeto: form.elements.tipoSujeto.value,
-            ubicacion: form.elements.ubicacion.value,
-            ingresosMensuales: form.elements.ingresosMensuales.value,
-            dolorPrincipal: form.elements.dolorPrincipal.value,
-            librosAlDia: form.elements.librosAlDia.value === 'true',
-            declaracionesEnPlazo: form.elements.declaracionesEnPlazo.value === 'true',
-            fiscalizacionActiva: form.elements.fiscalizacionActiva.value === 'true'
-          });
+        /* Progress Bar */
+        .progress-bar-container {
+            width: 100%;
+            height: 4px;
+            background: #1e293b;
+            border-radius: 2px;
+            margin-bottom: 24px;
+            display: none;
+        }
 
-          const esVip = diag.respuestas.tipoSujeto === 'contribuyente_especial' || diag.respuestas.ingresosMensuales > 10000;
-          container.innerHTML = generarHTMLResultado(diag, esVip, rifVal.rifFormateado);
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: var(--accent-color);
+            box-shadow: 0 0 10px var(--accent-color);
+            transition: width 0.3s ease;
+        }
+
+        /* Form Phase 1 */
+        h1 {
+            font-size: 1.5rem;
+            color: var(--accent-color);
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        p.subtitle {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #cbd5e1;
+        }
+
+        input {
+            padding: 14px;
+            background: var(--input-bg);
+            border: 1px solid #334155;
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
+        }
+
+        input.invalid {
+            border-color: var(--error-color);
+        }
+
+        input.valid {
+            border-color: var(--success-color);
+        }
+
+        /* Questions Phase 2 */
+        .question-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            line-height: 1.4;
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 30px;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        /* Result Phase 3 */
+        .result-container {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            height: 100%;
+        }
+
+        .risk-badge {
+            font-size: 1.8rem;
+            font-weight: 800;
+            padding: 12px 24px;
+            border-radius: 12px;
+            margin: 15px 0;
+            text-transform: uppercase;
+        }
+
+        .risk-Bajo { border: 2px solid var(--success-color); color: var(--success-color); box-shadow: 0 0 20px rgba(34, 197, 94, 0.2); }
+        .risk-Moderado { border: 2px solid #eab308; color: #eab308; box-shadow: 0 0 20px rgba(234, 179, 8, 0.2); }
+        .risk-Crítico { border: 2px solid var(--error-color); color: var(--error-color); box-shadow: 0 0 20px rgba(239, 68, 68, 0.2); }
+
+        /* Buttons */
+        .btn {
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: var(--accent-color);
+            color: #020617;
+        }
+
+        .btn-primary:disabled {
+            background: #1e293b;
+            color: #64748b;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--accent-color);
+            color: white;
+        }
+
+        .btn-outline:hover {
+            background: rgba(0, 243, 255, 0.1);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .btn-whatsapp {
+            background: #25D366;
+            color: white;
+            text-decoration: none;
+            width: 100%;
+            margin-top: 20px;
+            box-shadow: 0 4px 20px rgba(37, 211, 102, 0.3);
+        }
+
+        .btn-whatsapp:hover {
+            background: #128C7E;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(37, 211, 102, 0.5);
+        }
+
+        .whatsapp-icon { width: 24px; height: 24px; fill: white; }
+
+        @media (max-width: 400px) {
+            #app-container { padding: 16px; }
+            h1 { font-size: 1.3rem; }
+            .question-text { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app-container">
+        <div id="progress-container" class="progress-bar-container">
+            <div id="progress-fill" class="progress-fill"></div>
+        </div>
+
+        <!-- FASE 1: CAPTURA DE DATOS -->
+        <div id="phase1" class="step active">
+            <h1>Diagnóstico Tributario</h1>
+            <p class="subtitle">Complete los datos para iniciar la evaluación preventiva.</p>
+            
+            <div class="input-group">
+                <label>Empresa / Nombre Completo</label>
+                <input type="text" id="userName" placeholder="Ej: Corporación Ejemplo C.A." autocomplete="organization">
+            </div>
+
+            <div class="input-group">
+                <label>RIF (Formato: J-00000000-0)</label>
+                <input type="text" id="userRIF" placeholder="J-12345678-9" maxlength="12">
+            </div>
+
+            <div class="input-group">
+                <label>Correo Electrónico</label>
+                <input type="email" id="userEmail" placeholder="correo@ejemplo.com" autocomplete="email">
+            </div>
+
+            <button id="startBtn" class="btn btn-primary" disabled style="margin-top: 10px;">
+                Iniciar Diagnóstico
+            </button>
+        </div>
+
+        <!-- FASE 2: PREGUNTAS -->
+        <div id="phase2" class="step">
+            <div id="questionContent" class="question-text">
+                <!-- Se inyecta por JS -->
+            </div>
+            <div class="options-grid">
+                <button class="btn btn-outline" onclick="handleAnswer(0)">SÍ</button>
+                <button class="btn btn-outline" onclick="handleAnswer(20)">NO</button>
+                <button class="btn btn-outline" onclick="handleAnswer(20)">NO SÉ</button>
+            </div>
+        </div>
+
+        <!-- FASE 3: RESULTADOS -->
+        <div id="phase3" class="step">
+            <div class="result-container">
+                <p style="color: #94a3b8; font-size: 1.1rem;">Nivel de Riesgo Detectado:</p>
+                <div id="riskLabel" class="risk-badge">CRÍTICO</div>
+                <p id="riskDesc" style="font-size: 0.95rem; line-height: 1.5; margin-bottom: 10px;"></p>
+                
+                <a href="#" id="waLink" target="_blank" class="btn btn-whatsapp">
+                    <svg class="whatsapp-icon" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                    SOLICITAR ASESORÍA
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // CONFIGURACIÓN
+        const advisors = ["584265112653", "584122089575"];
+        const selectedAdvisor = advisors[Math.floor(Math.random() * advisors.length)];
+
+        const questions = [
+            "¿Sabes exactamente cuánto deberías estar pagando de impuestos este mes?",
+            "Si el SENIAT te fiscalizara mañana, ¿podrías presentar todos tus documentos en orden?",
+            "¿Tu negocio recibe o realiza pagos en divisas o por plataformas digitales (Zelle, Binance, entre otros.)?",
+            "¿Cuándo fue la última vez que un especialista externo revisó tu situación tributaria?",
+            "¿Tienes trabajadores y sabes si estás cumpliendo con el IVSS y el INCES?"
+        ];
+
+        // ESTADO
+        let currentQuestion = 0;
+        let score = 0;
+        let userData = { name: '', rif: '', email: '' };
+
+        // DOM ELEMENTS
+        const inputs = {
+            name: document.getElementById('userName'),
+            rif: document.getElementById('userRIF'),
+            email: document.getElementById('userEmail')
+        };
+        const startBtn = document.getElementById('startBtn');
+        const phase1 = document.getElementById('phase1');
+        const phase2 = document.getElementById('phase2');
+        const phase3 = document.getElementById('phase3');
+        const progressContainer = document.getElementById('progress-container');
+        const progressFill = document.getElementById('progress-fill');
+        const qContent = document.getElementById('questionContent');
+
+        // VALIDACIÓN
+        function validateInputs() {
+            const nameVal = inputs.name.value.trim();
+            const rifVal = inputs.rif.value.trim().toUpperCase();
+            const emailVal = inputs.email.value.trim();
+
+            const rifRegex = /^[VEJG]-[0-9]{8}-[0-9]$/;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            const isNameValid = nameVal.length > 3;
+            const isRifValid = rifRegex.test(rifVal);
+            const isEmailValid = emailRegex.test(emailVal);
+
+            // Visual feedback
+            inputs.name.className = nameVal ? (isNameValid ? 'valid' : 'invalid') : '';
+            inputs.rif.className = rifVal ? (isRifValid ? 'valid' : 'invalid') : '';
+            inputs.email.className = emailVal ? (isEmailValid ? 'valid' : 'invalid') : '';
+
+            const isValid = isNameValid && isRifValid && isEmailValid;
+            startBtn.disabled = !isValid;
+            
+            if(isValid) {
+                userData = { name: nameVal, rif: rifVal, email: emailVal };
+            }
+        }
+
+        Object.values(inputs).forEach(input => {
+            input.addEventListener('input', validateInputs);
         });
-      </script>
-    </main>
-  </body>
+
+        // NAVEGACIÓN
+        startBtn.onclick = () => {
+            phase1.classList.remove('active');
+            phase2.classList.add('active');
+            progressContainer.style.display = 'block';
+            showQuestion();
+        };
+
+        function showQuestion() {
+            qContent.innerText = questions[currentQuestion];
+            const progress = ((currentQuestion) / questions.length) * 100;
+            progressFill.style.width = progress + '%';
+        }
+
+        function handleAnswer(pts) {
+            score += pts;
+            currentQuestion++;
+            
+            if (currentQuestion < questions.length) {
+                // Efecto transición suave
+                phase2.style.opacity = '0';
+                setTimeout(() => {
+                    showQuestion();
+                    phase2.style.opacity = '1';
+                }, 200);
+            } else {
+                finishDiagnostic();
+            }
+        }
+
+        function finishDiagnostic() {
+            progressFill.style.width = '100%';
+            phase2.classList.remove('active');
+            phase3.classList.add('active');
+
+            let risk = "";
+            let desc = "";
+            let emoji = "";
+
+            if (score >= 80) {
+                risk = "Crítico";
+                emoji = "🚨";
+                desc = "Tu situación tributaria requiere atención inmediata. Existe una alta probabilidad de multas severas en una fiscalización.";
+            } else if (score >= 40) {
+                risk = "Moderado";
+                emoji = "⚠️";
+                desc = "Se detectaron vulnerabilidades que deben ser corregidas para evitar sanciones y optimizar tu cumplimiento.";
+            } else {
+                risk = "Bajo";
+                emoji = "✅";
+                desc = "Mantienes un buen nivel de cumplimiento. Te recomendamos una asesoría periódica para mantenerte al día con los cambios legales.";
+            }
+
+            const label = document.getElementById('riskLabel');
+            label.innerText = `RIESGO ${risk.toUpperCase()} ${emoji}`;
+            label.className = `risk-badge risk-${risk}`;
+            document.getElementById('riskDesc').innerText = desc;
+
+            const safeName = sanitize(userData.name);
+            const safeRif = sanitize(userData.rif);
+            const safeEmail = sanitize(userData.email);
+
+            const message = `Hola! Mi nombre es ${safeName}, RIF ${safeRif}. Mi resultado en el diagnóstico es RIESGO ${risk.toUpperCase()} ${emoji}. Mi correo es ${safeEmail}. Necesito asesoría especializada urgente.`;
+            
+            document.getElementById('waLink').href = `https://wa.me/${selectedAdvisor}?text=${encodeURIComponent(message)}`;
+        }
+
+        // Sanitización simple
+        function sanitize(str) {
+            return str.replace(/[<>\"\'&]/g, '');
+        }
+    </script>
+</body>
 </html>
