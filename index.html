@@ -3,186 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Gestión Tributaria - Mhakos</title>
+    <title>Calculadora de Ilícitos y Riesgo</title>
     <style>
         :root {
-            --bg: #020617; --neon: #00f3ff; --card-bg: rgba(15, 23, 42, 0.95);
+            --bg: #020617; --neon: #00f3ff; --card: rgba(15, 23, 42, 0.9);
             --text: #f8fafc; --error: #ef4444; --success: #22c55e;
         }
-        body {
-            margin: 0; font-family: 'Inter', sans-serif;
-            background-color: var(--bg); color: var(--text);
-            display: flex; justify-content: center; padding: 20px;
-        }
-        .container { width: 100%; max-width: 500px; }
-        .card { 
-            background: var(--card-bg); padding: 25px; border-radius: 20px;
-            border: 1px solid rgba(0, 243, 255, 0.3); box-shadow: 0 0 30px rgba(0, 243, 255, 0.1);
-        }
-        h1 { color: var(--neon); text-align: center; font-size: 22px; margin-bottom: 20px; }
+        body { margin: 0; font-family: sans-serif; background: var(--bg); color: var(--text); display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 480px; padding: 20px; }
+        .card { background: var(--card); padding: 25px; border-radius: 16px; border: 1px solid rgba(0, 243, 255, 0.2); }
+        h1 { color: var(--neon); text-align: center; font-size: 22px; }
         
-        /* Formulario */
-        .field { margin-bottom: 15px; }
-        label { display: block; font-size: 13px; margin-bottom: 6px; color: #94a3b8; }
-        input {
-            width: 100%; padding: 12px; background: #000; border: 1px solid #334155;
-            border-radius: 10px; color: white; box-sizing: border-box; font-size: 15px;
-        }
-        .err { color: var(--error); font-size: 11px; margin-top: 4px; display: none; }
+        .field-group { margin-bottom: 15px; }
+        label { display: block; font-size: 13px; color: #94a3b8; margin-bottom: 5px; }
+        input { width: 100%; padding: 12px; background: #000; border: 1px solid #334155; border-radius: 8px; color: white; box-sizing: border-box; }
         
-        /* Botones */
-        button, .btn-link {
-            width: 100%; padding: 14px; border-radius: 10px; border: none; font-weight: bold;
-            cursor: pointer; transition: 0.3s; margin-top: 10px; font-size: 15px; text-align: center;
-        }
+        button { width: 100%; padding: 14px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.3s; }
         .btn-main { background: var(--neon); color: #020617; }
-        .btn-main:disabled { background: #1e293b; color: #64748b; cursor: not-allowed; }
+        .btn-main:disabled { background: #1e293b; color: #64748b; }
         .btn-opt { background: #1e293b; color: white; border: 1px solid #334155; }
-        .btn-opt:hover { border-color: var(--neon); }
+
+        /* Estilos Calculadora */
+        .calc-res { background: rgba(239, 68, 68, 0.1); border: 1px dashed var(--error); padding: 15px; border-radius: 12px; margin: 20px 0; text-align: center; }
+        .monto { font-size: 28px; font-weight: 800; color: var(--error); display: block; margin: 10px 0; }
         
-        /* Calculadora Estilo Original */
-        .calc-display {
-            background: rgba(0, 0, 0, 0.4); padding: 20px; border-radius: 12px;
-            margin: 20px 0; border: 1px dashed var(--neon); text-align: center;
-        }
-        .multa-monto { font-size: 32px; font-weight: 800; color: var(--error); display: block; }
-        .ut-info { font-size: 12px; color: #94a3b8; margin-top: 5px; }
-
         .hidden { display: none; }
-        .visible { display: block; animation: fadeIn 0.5s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        .btn-wa { background: var(--success); color: white; text-decoration: none; display: block; }
+        .btn-wa { background: var(--success); color: white; text-decoration: none; display: block; text-align: center; padding: 15px; border-radius: 8px; margin-top: 15px; }
     </style>
 </head>
 <body>
     <div class="container">
-        <div id="fase1" class="card visible">
+        <div id="f1" class="card">
             <h1>Diagnóstico Tributario</h1>
-            <div class="field">
-                <label>Empresa / Nombre Completo</label>
-                <input type="text" id="nombre" placeholder="Ej: Corporación ABC, C.A.">
-                <div id="e-nom" class="err">Nombre obligatorio.</div>
+            <div class="field-group">
+                <label>Empresa / Nombre</label>
+                <input type="text" id="nombre" placeholder="Ej: Corporación ABC">
             </div>
-            <div class="field">
+            <div class="field-group">
                 <label>RIF (Ej: J-12345678-0)</label>
-                <input type="text" id="rif" placeholder="J-00000000-0">
-                <div id="e-rif" class="err">Formato de RIF inválido.</div>
+                <input type="text" id="rif" placeholder="V-00000000-0">
             </div>
-            <div class="field">
+            <div class="field-group">
                 <label>Correo Electrónico</label>
-                <input type="email" id="correo" placeholder="gerencia@empresa.com">
-                <div id="e-cor" class="err">Ingrese un correo válido.</div>
+                <input type="email" id="correo" placeholder="gerencia@correo.com">
             </div>
-            <button id="btn-go" class="btn-main" disabled>INICIAR EVALUACIÓN</button>
+            <button id="btn-iniciar" class="btn-main" onclick="irPreguntas()">INICIAR EVALUACIÓN</button>
         </div>
 
-        <div id="fase2" class="card hidden">
-            <p id="step" style="text-align:center; color: var(--neon); font-weight:bold;"></p>
-            <h2 id="q-text" style="text-align:center; font-size: 18px; margin: 20px 0;"></h2>
-            <button class="btn-opt" onclick="ask(0)">SÍ, TODO EN ORDEN</button>
-            <button class="btn-opt" onclick="ask(20)">NO / TENGO DUDAS</button>
-            <button class="btn-opt" onclick="ask(20)">NO LO SÉ</button>
+        <div id="f2" class="card hidden">
+            <h2 id="q-text" style="font-size: 18px; text-align: center;"></h2>
+            <button class="btn-opt" onclick="sig(0)">SÍ, TODO AL DÍA</button>
+            <button class="btn-opt" onclick="sig(20)">NO / TENGO DUDAS</button>
+            <button class="btn-opt" onclick="sig(20)">NO LO SÉ</button>
         </div>
 
-        <div id="fase3" class="card hidden">
-            <h1>Resultado del Análisis</h1>
-            <div style="text-align:center; margin-bottom:15px;">
-                Estatus: <span id="r-status" style="font-weight:bold; font-size:20px;"></span>
-            </div>
+        <div id="f3" class="card hidden">
+            <h2 style="text-align:center;">Resultado: <span id="riesgo"></span></h2>
             
-            <div class="calc-display">
-                <span style="font-size: 14px; color: var(--neon);">MULTA ESTIMADA (ILÍCITOS)</span>
-                <span id="monto-bs" class="multa-monto">Bs. 0.00</span>
-                <div class="ut-info">Basado en <span id="cant-ut">0</span> UT (Valor UT: Bs. 9.00)</div>
+            <div class="calc-res">
+                <span style="font-size: 12px; color: #fca5a5;">MULTA ESTIMADA POR ILÍCITOS FORMALES</span>
+                <span id="monto-bs" class="monto">Bs. 0,00</span>
+                <span style="font-size: 11px; color: #94a3b8;">Basado en Valor UT: Bs. 9,00</span>
             </div>
 
-            <p id="r-desc" style="font-size:14px; text-align:center; color:#cbd5e1; line-height:1.5;"></p>
+            <p id="desc" style="font-size: 14px; text-align: center; color: #cbd5e1;"></p>
             
-            <a id="wa-link" href="#" class="btn-link btn-wa" target="_blank">SOLICITAR ASESORÍA URGENTE</a>
-            <button onclick="location.reload()" style="background:transparent; color:#64748b; font-size:13px; text-decoration:underline;">Reiniciar y limpiar datos</button>
+            <a id="wa" href="#" class="btn-wa">SOLICITAR ASESORÍA URGENTE</a>
+            <button onclick="location.reload()" style="background:transparent; color:#64748b; font-size:12px;">Reiniciar evaluación</button>
         </div>
     </div>
 
     <script>
         const qs = [
-            "¿Lleva sus Libros de Compra y Venta al día según normativa?",
-            "¿Emite facturas legales o usa máquina fiscal autorizada?",
-            "¿Declara el IVA y el ISLR dentro de los plazos legales?",
-            "¿Su Registro de Información Fiscal (RIF) está actualizado?",
-            "¿Maneja pagos en divisas (IGTF) y los reporta correctamente?"
+            "¿Lleva sus Libros de Compra y Venta según la ley?",
+            "¿Emite facturas legales o usa máquina fiscal?",
+            "¿Declara el IVA y el ISLR a tiempo?",
+            "¿Su RIF está vigente y actualizado?",
+            "¿Maneja pagos en divisas y los reporta (IGTF)?"
         ];
-
         let cur = 0, pts = 0;
-        const UT_VALOR = 9.00; // Valor de la UT que estaba en tu código de WordPress
+        const UT = 9.00;
 
-        // Validación de datos
-        const fields = {
-            n: document.getElementById('nombre'),
-            r: document.getElementById('rif'),
-            c: document.getElementById('correo')
-        };
-
-        function validate() {
-            const vN = fields.n.value.length > 3;
-            const vR = /^[VEJG]-?\d{7,9}-?\d$/.test(fields.r.value.trim().toUpperCase());
-            const vC = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fields.c.value);
-            
-            document.getElementById('e-nom').style.display = (fields.n.value && !vN) ? 'block' : 'none';
-            document.getElementById('e-rif').style.display = (fields.r.value && !vR) ? 'block' : 'none';
-            document.getElementById('e-cor').style.display = (fields.c.value && !vC) ? 'block' : 'none';
-            
-            document.getElementById('btn-go').disabled = !(vN && vR && vC);
+        function irPreguntas() {
+            document.getElementById('f1').classList.add('hidden');
+            document.getElementById('f2').classList.remove('hidden');
+            nextQ();
         }
 
-        Object.values(fields).forEach(f => f.addEventListener('input', validate));
-
-        document.getElementById('btn-go').addEventListener('click', () => {
-            document.getElementById('fase1').classList.replace('visible', 'hidden');
-            document.getElementById('fase2').classList.replace('hidden', 'visible');
-            showQ();
-        });
-
-        function showQ() {
-            document.getElementById('step').innerText = `PREGUNTA ${cur + 1} DE 5`;
+        function nextQ() {
             document.getElementById('q-text').innerText = qs[cur];
         }
 
-        function ask(p) {
+        function sig(p) {
             pts += p;
             cur++;
-            if (cur < qs.length) showQ();
-            else showFinal();
+            if(cur < qs.length) nextQ();
+            else verResultados();
         }
 
-        function showFinal() {
-            document.getElementById('fase2').classList.replace('visible', 'hidden');
-            document.getElementById('fase3').classList.replace('hidden', 'visible');
+        function verResultados() {
+            document.getElementById('f2').classList.add('hidden');
+            document.getElementById('f3').classList.remove('hidden');
             
-            let status = "BAJO", col = "#22c55e", uts = 50;
-            let desc = "Su perfil presenta cumplimiento básico. Recomendamos auditoría preventiva.";
+            let r = "BAJO", uts = 50, col = "#22c55e";
+            if(pts >= 80) { r = "CRÍTICO"; uts = 500; col = "#ef4444"; }
+            else if(pts >= 40) { r = "MODERADO"; uts = 150; col = "#f59e0b"; }
 
-            if (pts >= 80) { 
-                status = "CRÍTICO"; col = "#ef4444"; uts = 500;
-                desc = "RIESGO DE CLAUSURA. Se detectaron ilícitos graves que generan multas severas según el COT.";
-            } else if (pts >= 40) { 
-                status = "MODERADO"; col = "#f59e0b"; uts = 150;
-                desc = "Existen debilidades en su control tributario. Evite sanciones por deberes formales.";
-            }
-
-            // Aplicación de la lógica de tu calculadora
-            const totalBs = uts * UT_VALOR;
-            document.getElementById('r-status').innerText = status;
-            document.getElementById('r-status').style.color = col;
-            document.getElementById('monto-bs').innerText = `Bs. ${totalBs.toLocaleString('es-VE', {minimumFractionDigits: 2})}`;
-            document.getElementById('cant-ut').innerText = uts;
-            document.getElementById('r-desc').innerText = desc;
-
-            // WhatsApp
-            const as = ['584265112653', '584122089575'];
-            const a = as[Math.floor(Math.random() * as.length)];
-            const msj = `Hola! Soy ${fields.n.value}, RIF ${fields.r.value}. Mi diagnóstico dio RIESGO ${status} con una multa estimada de Bs. ${totalBs}. Necesito asesoría.`;
-            document.getElementById('wa-link').href = `https://wa.me/${a}?text=${encodeURIComponent(msj)}`;
+            const m = uts * UT;
+            document.getElementById('riesgo').innerText = r;
+            document.getElementById('riesgo').style.color = col;
+            document.getElementById('monto-bs').innerText = `Bs. ${m.toLocaleString('es-VE', {minimumFractionDigits: 2})}`;
+            document.getElementById('desc').innerText = `Se han detectado posibles fallas que suman ${uts} Unidades Tributarias en multas estimadas.`;
+            
+            // Link WhatsApp
+            const n = document.getElementById('nombre').value;
+            const msj = `Hola! Soy ${n}. Mi diagnóstico dio Riesgo ${r} con una multa estimada de Bs. ${m}. Necesito asesoría especializada.`;
+            document.getElementById('wa').href = `https://wa.me/584265112653?text=${encodeURIComponent(msj)}`;
         }
     </script>
 </body>
