@@ -3,206 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mhakos - Soluciones Tributarias</title>
+    <title>Mhakos - Consultoría Tributaria</title>
     <style>
         :root {
-            --bg: #020617;
-            --accent: #00f3ff;
-            --card-bg: rgba(15, 23, 42, 0.7);
-            --error: #ff4d4d;
-            --success: #00ff88;
+            --bg: #020617; --accent: #00f3ff; --card-bg: rgba(15, 23, 42, 0.7);
+            --error: #ff4d4d; --success: #00ff88;
         }
-
         body {
-            margin: 0;
-            font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+            margin: 0; font-family: 'Inter', sans-serif;
             background: radial-gradient(circle at top right, #0f172a, var(--bg));
-            color: #f8fafc;
-            display: flex;
-            justify-content: center;
-            min-height: 100vh;
+            color: #f8fafc; display: flex; justify-content: center; min-height: 100vh;
         }
-
-        .container { width: 100%; max-width: 480px; padding: 20px; }
-
-        /* Estilo Innovador de Tarjetas */
+        .container { width: 100%; max-width: 460px; padding: 20px; }
         .glass-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 24px;
-            padding: 28px;
-            margin-bottom: 24px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            background: var(--card-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px;
+            padding: 25px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
+        h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 2px; color: var(--accent); text-align: center; margin-bottom: 20px; }
 
-        h2 {
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: var(--accent);
-            text-align: center;
-            margin-bottom: 25px;
-            opacity: 0.9;
-        }
-
-        /* Calculadora Estilo "Action Cards" */
-        .calc-grid { display: grid; gap: 12px; }
-
+        /* Calculadora */
+        .calc-grid { display: grid; gap: 10px; }
         .ilic-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 16px 20px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px; padding: 14px 18px; display: flex; align-items: center; gap: 12px;
+            cursor: pointer; transition: 0.3s;
         }
-
-        .ilic-card:hover { background: rgba(0, 243, 255, 0.05); border-color: rgba(0, 243, 255, 0.3); }
-
-        .ilic-card.active {
-            background: rgba(0, 243, 255, 0.1);
-            border-color: var(--accent);
-            box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
-        }
-
-        .ilic-card input {
-            width: 22px; height: 22px; accent-color: var(--accent);
-            cursor: pointer;
-        }
-
-        .ilic-card span { font-size: 15px; font-weight: 500; flex: 1; }
-        .ilic-card .pts { font-size: 12px; opacity: 0.6; font-weight: bold; }
+        .ilic-card.active { background: rgba(0, 243, 255, 0.08); border-color: var(--accent); }
+        .ilic-card span { font-size: 14px; font-weight: 500; flex: 1; }
+        .ilic-card input { width: 18px; height: 18px; accent-color: var(--accent); }
 
         .tcmv-display {
-            margin-top: 25px;
-            text-align: center;
-            padding: 20px;
-            background: linear-gradient(145deg, rgba(0, 243, 255, 0.05), transparent);
-            border-radius: 20px;
-            border: 1px solid rgba(0, 243, 255, 0.2);
+            margin-top: 20px; text-align: center; padding: 15px;
+            background: rgba(0, 243, 255, 0.03); border-radius: 16px; border: 1px solid rgba(0, 243, 255, 0.15);
         }
+        /* Tamaño reducido a petición */
+        .tcmv-label { font-size: 9px; letter-spacing: 1.5px; color: #94a3b8; margin-bottom: 4px; font-weight: 700; }
+        .tcmv-val { font-size: 38px; font-weight: 800; color: var(--accent); text-shadow: 0 0 15px rgba(0, 243, 255, 0.3); }
 
-        .tcmv-val {
-            font-size: 48px;
-            font-weight: 800;
-            color: var(--accent);
-            text-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
+        /* Diagnóstico */
+        .input-group { margin-bottom: 18px; }
+        label { display: block; font-size: 11px; margin-bottom: 6px; color: #94a3b8; padding-left: 4px; }
+        input {
+            width: 100%; padding: 13px 16px; background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px;
+            color: white; font-size: 14px; box-sizing: border-box;
         }
+        input.invalid { border-color: var(--error); box-shadow: 0 0 0 4px rgba(255, 77, 77, 0.05); }
+        .err-msg { color: var(--error); font-size: 10px; margin-top: 5px; font-weight: 600; display: none; }
 
-        /* Inputs con validación innovadora */
-        .input-group { margin-bottom: 20px; }
-        label { display: block; font-size: 12px; margin-bottom: 8px; color: #94a3b8; padding-left: 5px; }
-
-        input[type="text"], input[type="email"] {
-            width: 100%;
-            padding: 14px 18px;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 14px;
-            color: white;
-            font-size: 15px;
-            box-sizing: border-box;
-            transition: 0.3s;
-        }
-
-        input:focus { border-color: var(--accent); outline: none; background: rgba(0, 243, 255, 0.02); }
-
-        /* Franja Roja de Error */
-        input.invalid {
-            border-color: var(--error) !important;
-            box-shadow: 0 0 0 4px rgba(255, 77, 77, 0.1);
-        }
-
-        .err-msg {
-            color: var(--error);
-            font-size: 11px;
-            margin-top: 6px;
-            padding-left: 5px;
-            font-weight: 600;
-            display: none;
-        }
-
-        button {
-            width: 100%;
-            padding: 16px;
-            border-radius: 16px;
-            border: none;
-            font-weight: 700;
-            font-size: 15px;
-            cursor: pointer;
-            transition: 0.4s;
-        }
-
-        .btn-primary {
-            background: var(--accent);
-            color: #020617;
-            box-shadow: 0 4px 15px rgba(0, 243, 255, 0.3);
-        }
-
-        .btn-primary:disabled {
-            background: #1e293b;
-            color: #64748b;
-            box-shadow: none;
-            cursor: not-allowed;
-        }
-
-        .btn-whatsapp {
-            background: #00ff88;
-            color: #020617;
-            text-decoration: none;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-        }
+        button { width: 100%; padding: 15px; border-radius: 14px; border: none; font-weight: 700; font-size: 14px; cursor: pointer; transition: 0.3s; }
+        .btn-primary { background: var(--accent); color: #020617; }
+        .btn-primary:disabled { background: #1e293b; color: #64748b; cursor: not-allowed; }
+        
+        .btn-wa { background: var(--success); color: #020617; text-decoration: none; display: flex; justify-content: center; align-items: center; text-transform: uppercase; }
 
         .hidden { display: none; }
-        .fade-in { animation: fadeIn 0.5s ease forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
 <div class="container">
-
     <div class="glass-card fade-in">
         <h2>Calculadora de Ilícitos</h2>
         <div class="calc-grid">
-            <label class="ilic-card" id="card-1">
-                <input type="checkbox" class="ilic" value="100" onchange="updateCard(this, 'card-1')">
+            <label class="ilic-card" id="c1">
+                <input type="checkbox" class="ilic" value="100" onchange="upd(this, 'c1')">
                 <span>Rif desactualizado</span>
-                <span class="pts">100</span>
             </label>
-            <label class="ilic-card" id="card-2">
-                <input type="checkbox" class="ilic" value="150" onchange="updateCard(this, 'card-2')">
+            <label class="ilic-card" id="c2">
+                <input type="checkbox" class="ilic" value="150" onchange="upd(this, 'c2')">
                 <span>No emitir facturas</span>
-                <span class="pts">150</span>
             </label>
-            <label class="ilic-card" id="card-3">
-                <input type="checkbox" class="ilic" value="150" onchange="updateCard(this, 'card-3')">
+            <label class="ilic-card" id="c3">
+                <input type="checkbox" class="ilic" value="150" onchange="upd(this, 'c3')">
                 <span>No tener libros</span>
-                <span class="pts">150</span>
             </label>
-            <label class="ilic-card" id="card-4">
-                <input type="checkbox" class="ilic" value="150" onchange="updateCard(this, 'card-4')">
+            <label class="ilic-card" id="c4">
+                <input type="checkbox" class="ilic" value="150" onchange="upd(this, 'c4')">
                 <span>No presentar declaración</span>
-                <span class="pts">150</span>
             </label>
-            <label class="ilic-card" id="card-5">
-                <input type="checkbox" class="ilic" value="100" onchange="updateCard(this, 'card-5')">
+            <label class="ilic-card" id="c5">
+                <input type="checkbox" class="ilic" value="100" onchange="upd(this, 'c5')">
                 <span>Declaración extemporánea</span>
-                <span class="pts">100</span>
             </label>
         </div>
-
         <div class="tcmv-display">
-            <div style="font-size: 11px; letter-spacing: 1px; color: #94a3b8; margin-bottom: 5px;">SANCIÓN ESTIMADA</div>
-            <div id="result-tcmv" class="tcmv-val">0 TCMV</div>
+            <div class="tcmv-label">SANCIÓN ESTIMADA</div>
+            <div id="res-tcmv" class="tcmv-val">0 TCMV</div>
         </div>
     </div>
 
@@ -210,153 +100,108 @@
         <h2>Diagnóstico de Riesgo</h2>
         <div class="input-group">
             <label>Nombre de la Empresa</label>
-            <input type="text" id="name" placeholder="Ej: Inversiones Mhakos C.A.">
-            <div id="err-name" class="err-msg">Por favor, ingrese el nombre comercial.</div>
+            <input type="text" id="name" placeholder="Nombre comercial">
+            <div id="e-name" class="err-msg">Ingrese el nombre de la empresa.</div>
         </div>
         <div class="input-group">
             <label>RIF</label>
             <input type="text" id="rif" placeholder="J-12345678-0">
-            <div id="err-rif" class="err-msg">Formato de RIF inválido (Ej: J-12345678-0).</div>
+            <div id="e-rif" class="err-msg">RIF inválido (Ej: J-12345678-0).</div>
         </div>
         <div class="input-group">
             <label>Correo Electrónico</label>
             <input type="email" id="email" placeholder="gerencia@empresa.com">
-            <div id="err-email" class="err-msg">Ingrese un correo corporativo válido.</div>
+            <div id="e-email" class="err-msg">Ingrese un correo válido.</div>
         </div>
-        <button id="btn-start" class="btn-primary" disabled onclick="nextStep()">COMENZAR EVALUACIÓN</button>
+        <button id="btn-start" class="btn-primary" disabled onclick="startQ()">COMENZAR EVALUACIÓN</button>
     </div>
 
-    <div id="step-questions" class="glass-card hidden">
+    <div id="step-q" class="glass-card hidden">
         <div style="text-align: center;">
-            <div id="progreso" style="font-size: 10px; color: var(--accent); margin-bottom: 10px; font-weight: 700;"></div>
-            <h3 id="q-text" style="font-size: 18px; line-height: 1.5; margin-bottom: 30px;"></h3>
-            <button class="btn-primary" style="background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 12px;" onclick="handleAns(0)">SÍ</button>
-            <button class="btn-primary" style="background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 12px;" onclick="handleAns(20)">NO</button>
-            <button class="btn-primary" style="background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1);" onclick="handleAns(20)">NO SÉ</button>
+            <div id="prog" style="font-size: 10px; color: var(--accent); margin-bottom: 8px; font-weight: 700;"></div>
+            <h3 id="q-txt" style="font-size: 17px; line-height: 1.5; margin-bottom: 25px;"></h3>
+            <button class="btn-primary" style="background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 10px;" onclick="handle(0)">SÍ</button>
+            <button class="btn-primary" style="background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 10px;" onclick="handle(20)">NO</button>
+            <button class="btn-primary" style="background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1);" onclick="handle(20)">NO SÉ</button>
         </div>
     </div>
 
-    <div id="step-result" class="glass-card hidden">
-        <h2 id="res-title"></h2>
-        <p id="res-desc" style="text-align: center; font-size: 14px; color: #94a3b8; line-height: 1.6; margin-bottom: 30px;"></p>
-        <a id="wa-link" href="#" target="_blank" class="btn-whatsapp">WHATSAPP ESPECIALIZADO</a>
-        <button onclick="location.reload()" style="background: transparent; color: #64748b; font-size: 12px; margin-top: 15px; text-decoration: underline;">Reiniciar proceso</button>
+    <div id="step-res" class="glass-card hidden">
+        <h2 id="res-level"></h2>
+        <p id="res-desc" style="text-align: center; font-size: 13px; color: #94a3b8; line-height: 1.5; margin-bottom: 25px;"></p>
+        <a id="wa-link" href="#" target="_blank" class="btn-wa">CONTACTAR CON ASESOR EXPERTO</a>
+        <button onclick="location.reload()" style="background: transparent; color: #64748b; font-size: 11px; margin-top: 15px; text-decoration: underline;">Reiniciar</button>
     </div>
-
 </div>
 
 <script>
-    // Lógica de Tarjetas de Calculadora
-    function updateCard(input, cardId) {
-        const card = document.getElementById(cardId);
-        if (input.checked) card.classList.add('active');
-        else card.classList.remove('active');
-        
-        // Calcular Concurrencia (Máximo + 50% de los demás)
+    // Lógica Calculadora
+    function upd(input, id) {
+        const card = document.getElementById(id);
+        input.checked ? card.classList.add('active') : card.classList.remove('active');
         const checks = document.querySelectorAll('.ilic:checked');
         let vals = Array.from(checks).map(c => parseFloat(c.value));
         let total = 0;
-
         if (vals.length > 0) {
             let max = Math.max(...vals);
             let others = vals.reduce((a, b) => a + b, 0) - max;
             total = max + (others / 2);
         }
-        document.getElementById('result-tcmv').innerText = total + " TCMV";
+        document.getElementById('res-tcmv').innerText = total + " TCMV";
     }
 
-    // Validación de Formulario
-    const f = {
-        n: document.getElementById('name'),
-        r: document.getElementById('rif'),
-        e: document.getElementById('email')
-    };
-
+    // Validación
+    const f = { n: document.getElementById('name'), r: document.getElementById('rif'), e: document.getElementById('email') };
     function validate() {
         const vN = f.n.value.trim().length >= 3;
         const vR = /^[VEJG]-?\d{7,9}-?\d$/.test(f.r.value.trim().toUpperCase());
         const vE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.e.value.trim());
-
-        toggleUI(f.n, 'err-name', vN);
-        toggleUI(f.r, 'err-rif', vR);
-        toggleUI(f.e, 'err-email', vE);
-
+        toggle(f.n, 'e-name', vN); toggle(f.r, 'e-rif', vR); toggle(f.e, 'e-email', vE);
         document.getElementById('btn-start').disabled = !(vN && vR && vE);
     }
-
-    function toggleUI(el, errId, isValid) {
-        if (el.value === "") {
-            el.classList.remove('invalid');
-            document.getElementById(errId).style.display = 'none';
-        } else if (!isValid) {
-            el.classList.add('invalid');
-            document.getElementById(errId).style.display = 'block';
-        } else {
-            el.classList.remove('invalid');
-            document.getElementById(errId).style.display = 'none';
-        }
+    function toggle(el, id, ok) {
+        if (el.value === "") { el.classList.remove('invalid'); document.getElementById(id).style.display='none'; }
+        else if (!ok) { el.classList.add('invalid'); document.getElementById(id).style.display='block'; }
+        else { el.classList.remove('invalid'); document.getElementById(id).style.display='none'; }
     }
-
-    Object.values(f).forEach(input => input.addEventListener('input', validate));
+    Object.values(f).forEach(i => i.addEventListener('input', validate));
 
     // Diagnóstico
     const questions = [
         "¿Sabes cuánto deberías estar pagando de impuestos este mes?",
         "Si el SENIAT te fiscalizara mañana, ¿tendrías todo en orden?",
-        "¿Tu negocio maneja pagos en divisas o plataformas digitales?",
+        "¿Tu negocio maneja pagos en divisas, billeteras y plataformas digitales?",
         "¿Un especialista externo revisó tu situación recientemente?",
         "¿Cumples actualmente con el IVSS e INCES?"
     ];
+    let cur = 0, score = 0;
 
-    let currentQ = 0;
-    let score = 0;
-
-    function nextStep() {
+    function startQ() {
         document.getElementById('step-data').classList.add('hidden');
-        document.getElementById('step-questions').classList.remove('hidden');
-        showQuestion();
+        document.getElementById('step-q').classList.remove('hidden');
+        showQ();
     }
-
-    function showQuestion() {
-        document.getElementById('progreso').innerText = `PASO ${currentQ + 1} / 5`;
-        document.getElementById('q-text').innerText = questions[currentQ];
+    function showQ() {
+        document.getElementById('prog').innerText = `PASO ${cur + 1} / 5`;
+        document.getElementById('q-txt').innerText = questions[cur];
     }
-
-    function handleAns(pts) {
-        score += pts;
-        currentQ++;
-        if (currentQ < questions.length) showQuestion();
-        else showFinal();
+    function handle(p) {
+        score += p; cur++;
+        if (cur < questions.length) showQ();
+        else showResult();
     }
-
-    function showFinal() {
-        document.getElementById('step-questions').classList.add('hidden');
-        document.getElementById('step-result').classList.remove('hidden');
-        
-        let level = "RIESGO BAJO";
-        let color = "#00ff88";
-        let desc = "Su perfil tributario parece saludable. Mantenga auditorías preventivas.";
-
-        if (score >= 80) { 
-            level = "RIESGO CRÍTICO"; color = "#ff4d4d"; 
-            desc = "Alerta máxima. Se detectaron fallas graves que pueden acarrear clausura inmediata.";
-        } else if (score >= 40) {
-            level = "RIESGO MODERADO"; color = "#ffaa00";
-            desc = "Existen inconsistencias que generarían multas en una fiscalización regular.";
-        }
-
-        const title = document.getElementById('res-title');
-        title.innerText = level;
-        title.style.color = color;
-        document.getElementById('res-desc').innerText = desc;
-
-        // WhatsApp
-        const asesores = ['584265112653', '584122089575'];
-        const a = asesores[Math.floor(Math.random() * asesores.length)];
-        const msj = `Hola! Soy de ${f.n.value}, RIF ${f.r.value}. Mi diagnóstico dio ${level}. Necesito asesoría especializada.`;
-        document.getElementById('wa-link').href = `https://api.whatsapp.com/send?phone=${a}&text=${encodeURIComponent(msj)}`;
+    function showResult() {
+        document.getElementById('step-q').classList.add('hidden');
+        document.getElementById('step-res').classList.remove('hidden');
+        let lvl = "RIESGO BAJO", col = "#00ff88", d = "Su perfil es saludable. Mantenga revisiones preventivas.";
+        if (score >= 80) { lvl = "RIESGO CRÍTICO"; col = "#ff4d4d"; d = "¡Alerta! Se detectaron fallas graves que pueden causar clausura inmediata."; }
+        else if (score >= 40) { lvl = "RIESGO MODERADO"; col = "#ffaa00"; d = "Existen inconsistencias que generarían multas en una fiscalización."; }
+        const t = document.getElementById('res-level'); t.innerText = lvl; t.style.color = col;
+        document.getElementById('res-desc').innerText = d;
+        const a = ['584265112653', '584122089575'][Math.floor(Math.random()*2)];
+        const m = `Hola! Soy de ${f.n.value}, RIF ${f.r.value}. Mi diagnóstico dio ${lvl}. Necesito asesoría especializada.`;
+        document.getElementById('wa-link').href = `https://api.whatsapp.com/send?phone=${a}&text=${encodeURIComponent(m)}`;
     }
 </script>
-
 </body>
 </html>
