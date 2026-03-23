@@ -3,123 +3,197 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Ilícitos y Riesgo</title>
+    <title>Tributos Venezuela - App</title>
     <style>
         :root {
-            --bg: #020617; --neon: #00f3ff; --card: rgba(15, 23, 42, 0.9);
+            --bg: #020617; --neon: #00f3ff; --card: rgba(15, 23, 42, 0.95);
             --text: #f8fafc; --error: #ef4444; --success: #22c55e;
         }
-        body { margin: 0; font-family: sans-serif; background: var(--bg); color: var(--text); display: flex; justify-content: center; }
-        .container { width: 100%; max-width: 480px; padding: 20px; }
-        .card { background: var(--card); padding: 25px; border-radius: 16px; border: 1px solid rgba(0, 243, 255, 0.2); }
-        h1 { color: var(--neon); text-align: center; font-size: 22px; }
+        body { margin: 0; font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); padding: 10px; }
+        .container { width: 100%; max-width: 500px; margin: 0 auto; }
+        .card { 
+            background: var(--card); padding: 25px; border-radius: 20px;
+            border: 1px solid rgba(0, 243, 255, 0.2); box-shadow: 0 0 25px rgba(0, 243, 255, 0.1);
+            margin-bottom: 20px;
+        }
+        h1, h2 { color: var(--neon); text-align: center; font-size: 20px; margin-bottom: 20px; }
         
-        .field-group { margin-bottom: 15px; }
-        label { display: block; font-size: 13px; color: #94a3b8; margin-bottom: 5px; }
-        input { width: 100%; padding: 12px; background: #000; border: 1px solid #334155; border-radius: 8px; color: white; box-sizing: border-box; }
-        
-        button { width: 100%; padding: 14px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.3s; }
-        .btn-main { background: var(--neon); color: #020617; }
-        .btn-main:disabled { background: #1e293b; color: #64748b; }
-        .btn-opt { background: #1e293b; color: white; border: 1px solid #334155; }
+        .field { margin-bottom: 20px; }
+        label { display: block; font-size: 13px; margin-bottom: 8px; color: #94a3b8; }
+        input {
+            width: 100%; padding: 12px; background: #000; border: 1px solid #334155;
+            border-radius: 10px; color: white; box-sizing: border-box; font-size: 15px;
+        }
+        /* Alertas Rojas */
+        input.invalid { border: 2px solid var(--error); background: rgba(239, 68, 68, 0.1); }
+        .error-msg { color: var(--error); font-size: 11px; margin-top: 5px; display: none; font-weight: bold; }
 
-        /* Estilos Calculadora */
-        .calc-res { background: rgba(239, 68, 68, 0.1); border: 1px dashed var(--error); padding: 15px; border-radius: 12px; margin: 20px 0; text-align: center; }
-        .monto { font-size: 28px; font-weight: 800; color: var(--error); display: block; margin: 10px 0; }
-        
+        button, .btn-link {
+            width: 100%; padding: 14px; border-radius: 10px; border: none; font-weight: bold;
+            cursor: pointer; transition: 0.3s; font-size: 15px; text-align: center; display: block;
+        }
+        .btn-main { background: var(--neon); color: #020617; }
+        .btn-main:disabled { background: #1e293b; color: #64748b; cursor: not-allowed; }
+        .btn-wa { background: var(--success); color: white; text-decoration: none; margin-top: 15px; }
+
+        /* Calculadora Independiente */
+        .check-item { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 14px; cursor: pointer; }
+        .check-item input { width: auto; cursor: pointer; }
+        .res-box { text-align: center; padding: 15px; border: 1px dashed var(--error); border-radius: 12px; margin-top: 15px; background: rgba(239,68,68,0.05); }
+
         .hidden { display: none; }
-        .btn-wa { background: var(--success); color: white; text-decoration: none; display: block; text-align: center; padding: 15px; border-radius: 8px; margin-top: 15px; }
     </style>
 </head>
 <body>
     <div class="container">
-        <div id="f1" class="card">
+        <div id="fase-datos" class="card">
             <h1>Diagnóstico Tributario</h1>
-            <div class="field-group">
-                <label>Empresa / Nombre</label>
-                <input type="text" id="nombre" placeholder="Ej: Corporación ABC">
+            <div class="field">
+                <label>Empresa / Nombre Completo</label>
+                <input type="text" id="nombre" placeholder="Ej: Inversiones ABC, C.A.">
+                <div id="m-nom" class="error-msg">El nombre de la empresa es obligatorio.</div>
             </div>
-            <div class="field-group">
+            <div class="field">
                 <label>RIF (Ej: J-12345678-0)</label>
-                <input type="text" id="rif" placeholder="V-00000000-0">
+                <input type="text" id="rif" placeholder="J-12345678-0">
+                <div id="m-rif" class="error-msg">Formato de RIF incorrecto (Ej: J-12345678-0).</div>
             </div>
-            <div class="field-group">
+            <div class="field">
                 <label>Correo Electrónico</label>
-                <input type="email" id="correo" placeholder="gerencia@correo.com">
+                <input type="email" id="correo" placeholder="gerencia@empresa.com">
+                <div id="m-cor" class="error-msg">Ingrese un correo electrónico válido.</div>
             </div>
-            <button id="btn-iniciar" class="btn-main" onclick="irPreguntas()">INICIAR EVALUACIÓN</button>
+            <button id="btn-iniciar" class="btn-main" disabled onclick="irPreguntas()">INICIAR EVALUACIÓN</button>
         </div>
 
-        <div id="f2" class="card hidden">
-            <h2 id="q-text" style="font-size: 18px; text-align: center;"></h2>
-            <button class="btn-opt" onclick="sig(0)">SÍ, TODO AL DÍA</button>
-            <button class="btn-opt" onclick="sig(20)">NO / TENGO DUDAS</button>
-            <button class="btn-opt" onclick="sig(20)">NO LO SÉ</button>
+        <div id="fase-preguntas" class="card hidden">
+            <p id="progreso" style="text-align:center; color:var(--neon); font-size:12px; font-weight:bold;"></p>
+            <h2 id="q-text" style="font-size:18px;"></h2>
+            <button class="btn-main" style="background:#1e293b; color:white; margin-bottom:10px;" onclick="responder(0)">SÍ</button>
+            <button class="btn-main" style="background:#1e293b; color:white; margin-bottom:10px;" onclick="responder(20)">NO</button>
+            <button class="btn-main" style="background:#1e293b; color:white;" onclick="responder(20)">NO SÉ</button>
         </div>
 
-        <div id="f3" class="card hidden">
-            <h2 style="text-align:center;">Resultado: <span id="riesgo"></span></h2>
-            
-            <div class="calc-res">
-                <span style="font-size: 12px; color: #fca5a5;">MULTA ESTIMADA POR ILÍCITOS FORMALES</span>
-                <span id="monto-bs" class="monto">Bs. 0,00</span>
-                <span style="font-size: 11px; color: #94a3b8;">Basado en Valor UT: Bs. 9,00</span>
-            </div>
+        <div id="fase-resultados" class="card hidden">
+            <h1>Riesgo: <span id="r-nivel"></span></h1>
+            <p id="r-desc" style="text-align:center; font-size:14px; color:#cbd5e1;"></p>
+            <a id="wa-link" href="#" target="_blank" class="btn-wa">SOLICITAR ASESORÍA ESPECIALIZADA</a>
+            <button onclick="location.reload()" style="background:transparent; color:#64748b; font-size:12px; margin-top:15px; text-decoration:underline;">Reiniciar Diagnóstico</button>
+        </div>
 
-            <p id="desc" style="font-size: 14px; text-align: center; color: #cbd5e1;"></p>
-            
-            <a id="wa" href="#" class="btn-wa">SOLICITAR ASESORÍA URGENTE</a>
-            <button onclick="location.reload()" style="background:transparent; color:#64748b; font-size:12px;">Reiniciar evaluación</button>
+        <div class="card">
+            <h2>Calculadora de Ilícitos (TCMV)</h2>
+            <div id="check-list">
+                <label class="check-item"><input type="checkbox" class="ilícito" value="100"> 1. Rif desactualizado (100)</label>
+                <label class="check-item"><input type="checkbox" class="ilícito" value="150"> 2. No emitir facturas (150)</label>
+                <label class="check-item"><input type="checkbox" class="ilícito" value="150"> 3. No tener libros (150)</label>
+                <label class="check-item"><input type="checkbox" class="ilícito" value="150"> 4. No presentar declaración (150)</label>
+                <label class="check-item"><input type="checkbox" class="ilícito" value="100"> 5. Declaración extemporánea (100)</label>
+            </div>
+            <div class="field" style="margin-top:15px;">
+                <label>Valor Euro BCV (TCMV):</label>
+                <input type="number" id="v-tcmv" value="45.50" oninput="calcularMulta()">
+            </div>
+            <div class="res-box">
+                <div style="font-size:11px; color:#fca5a5; margin-bottom:5px;">SANCIÓN ESTIMADA</div>
+                <div id="t-tcmv" style="font-size:18px; font-weight:bold; color:var(--neon);">0 TCMV</div>
+                <div id="t-bs" style="font-size:24px; font-weight:bold; color:var(--error);">Bs. 0.00</div>
+            </div>
         </div>
     </div>
 
     <script>
-        const qs = [
-            "¿Lleva sus Libros de Compra y Venta según la ley?",
-            "¿Emite facturas legales o usa máquina fiscal?",
-            "¿Declara el IVA y el ISLR a tiempo?",
-            "¿Su RIF está vigente y actualizado?",
-            "¿Maneja pagos en divisas y los reporta (IGTF)?"
+        // 1. LAS 5 PREGUNTAS ORIGINALES
+        const preguntas = [
+            "¿Sabes exactamente cuánto deberías estar pagando de impuestos este mes?",
+            "Si el SENIAT te fiscalizara mañana, ¿podrías presentar todos tus documentos en orden?",
+            "¿Tu negocio recibe o realiza pagos en divisas o por plataformas digitales (Zelle, Binance, etc.)?",
+            "¿Cuándo fue la última vez que un especialista externo revisó tu situación tributaria?",
+            "¿Tienes trabajadores y sabes si estás cumpliendo con el IVSS y el INCES?"
         ];
+
         let cur = 0, pts = 0;
-        const UT = 9.00;
+        const inputs = {
+            nom: document.getElementById('nombre'),
+            rif: document.getElementById('rif'),
+            cor: document.getElementById('correo')
+        };
 
+        // 2. VALIDACIONES CON ALERTAS ROJAS
+        function validar() {
+            const vN = inputs.nom.value.trim().length > 3;
+            const vR = /^[VEJG]-?\d{7,9}-?\d$/.test(inputs.rif.value.trim().toUpperCase());
+            const vC = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inputs.cor.value.trim());
+
+            toggleErr(inputs.nom, 'm-nom', vN);
+            toggleErr(inputs.rif, 'm-rif', vR);
+            toggleErr(inputs.cor, 'm-cor', vC);
+
+            document.getElementById('btn-iniciar').disabled = !(vN && vR && vC);
+        }
+
+        function toggleErr(el, id, ok) {
+            if (el.value === "") { el.classList.remove('invalid'); document.getElementById(id).style.display='none'; }
+            else if (!ok) { el.classList.add('invalid'); document.getElementById(id).style.display='block'; }
+            else { el.classList.remove('invalid'); document.getElementById(id).style.display='none'; }
+        }
+
+        Object.values(inputs).forEach(inp => inp.addEventListener('input', validar));
+
+        // 3. FLUJO DE DIAGNÓSTICO
         function irPreguntas() {
-            document.getElementById('f1').classList.add('hidden');
-            document.getElementById('f2').classList.remove('hidden');
-            nextQ();
+            document.getElementById('fase-datos').classList.add('hidden');
+            document.getElementById('fase-preguntas').classList.remove('hidden');
+            showQ();
         }
 
-        function nextQ() {
-            document.getElementById('q-text').innerText = qs[cur];
+        function showQ() {
+            document.getElementById('progreso').innerText = `PREGUNTA ${cur + 1} DE 5`;
+            document.getElementById('q-text').innerText = preguntas[cur];
         }
 
-        function sig(p) {
-            pts += p;
-            cur++;
-            if(cur < qs.length) nextQ();
-            else verResultados();
+        function responder(p) {
+            pts += p; cur++;
+            if (cur < preguntas.length) showQ();
+            else mostrarResultado();
         }
 
-        function verResultados() {
-            document.getElementById('f2').classList.add('hidden');
-            document.getElementById('f3').classList.remove('hidden');
+        function mostrarResultado() {
+            document.getElementById('fase-preguntas').classList.add('hidden');
+            document.getElementById('fase-resultados').classList.remove('hidden');
+            let n = "BAJO", c = "#22c55e", d = "Su cumplimiento parece estable, pero se recomienda revisión anual.";
+            if(pts >= 80) { n = "CRÍTICO"; c = "#ef4444"; d = "¡ALERTA! Se detectaron riesgos severos de fiscalización y multas."; }
+            else if(pts >= 40) { n = "MODERADO"; c = "#f59e0b"; d = "Existen vacíos legales que podrían generar sanciones formales."; }
             
-            let r = "BAJO", uts = 50, col = "#22c55e";
-            if(pts >= 80) { r = "CRÍTICO"; uts = 500; col = "#ef4444"; }
-            else if(pts >= 40) { r = "MODERADO"; uts = 150; col = "#f59e0b"; }
+            document.getElementById('r-nivel').innerText = n;
+            document.getElementById('r-nivel').style.color = c;
+            document.getElementById('r-desc').innerText = d;
 
-            const m = uts * UT;
-            document.getElementById('riesgo').innerText = r;
-            document.getElementById('riesgo').style.color = col;
-            document.getElementById('monto-bs').innerText = `Bs. ${m.toLocaleString('es-VE', {minimumFractionDigits: 2})}`;
-            document.getElementById('desc').innerText = `Se han detectado posibles fallas que suman ${uts} Unidades Tributarias en multas estimadas.`;
-            
-            // Link WhatsApp
-            const n = document.getElementById('nombre').value;
-            const msj = `Hola! Soy ${n}. Mi diagnóstico dio Riesgo ${r} con una multa estimada de Bs. ${m}. Necesito asesoría especializada.`;
-            document.getElementById('wa').href = `https://wa.me/584265112653?text=${encodeURIComponent(msj)}`;
+            // WhatsApp Dinámico (Rotación)
+            const as = ['584265112653', '584122089575'];
+            const a = as[Math.floor(Math.random() * as.length)];
+            const msj = `Hola! Soy ${inputs.nom.value}, RIF ${inputs.rif.value}. Mi diagnóstico dio Riesgo ${n}. Necesito asesoría especializada urgente.`;
+            document.getElementById('wa-link').href = `https://api.whatsapp.com/send?phone=${a}&text=${encodeURIComponent(msj)}`;
         }
+
+        // 4. LÓGICA CALCULADORA (Regla de Concurrencia de tu Excel)
+        function calcularMulta() {
+            const checks = document.querySelectorAll('.ilícito:checked');
+            let vals = Array.from(checks).map(c => parseFloat(c.value));
+            let totalTCMV = 0;
+
+            if (vals.length > 0) {
+                let max = Math.max(...vals);
+                let otros = vals.reduce((a, b) => a + b, 0) - max;
+                totalTCMV = max + (otros / 2); // Fórmula del documento
+            }
+
+            const valorTCMV = document.getElementById('v-tcmv').value || 0;
+            document.getElementById('t-tcmv').innerText = `${totalTCMV} TCMV`;
+            document.getElementById('t-bs').innerText = `Bs. ${(totalTCMV * valorTCMV).toLocaleString('es-VE', {minimumFractionDigits: 2})}`;
+        }
+
+        document.querySelectorAll('.ilícito').forEach(c => c.addEventListener('change', calcularMulta));
     </script>
 </body>
 </html>
