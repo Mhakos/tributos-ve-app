@@ -3,171 +3,360 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tributos Venezuela - App</title>
+    <title>Mhakos - Soluciones Tributarias</title>
     <style>
         :root {
-            --bg: #020617; --neon: #00f3ff; --card: rgba(15, 23, 42, 0.95);
-            --text: #f8fafc; --error: #ef4444; --success: #22c55e;
+            --bg: #020617;
+            --accent: #00f3ff;
+            --card-bg: rgba(15, 23, 42, 0.7);
+            --error: #ff4d4d;
+            --success: #00ff88;
         }
-        body { margin: 0; font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--text); padding: 15px; display: flex; justify-content: center; }
-        .container { width: 100%; max-width: 480px; }
-        .card { 
-            background: var(--card); padding: 22px; border-radius: 18px;
-            border: 1px solid rgba(0, 243, 255, 0.2); margin-bottom: 20px;
-        }
-        h2 { color: var(--neon); text-align: center; font-size: 18px; margin-top: 0; text-transform: uppercase; }
-        
-        /* Estilos de Campos e Inputs */
-        .field { margin-bottom: 15px; }
-        label { display: block; font-size: 12px; margin-bottom: 5px; color: #94a3b8; }
-        input {
-            width: 100%; padding: 12px; background: #000; border: 1px solid #334155;
-            border-radius: 10px; color: white; box-sizing: border-box; font-size: 14px;
-        }
-        /* Alertas Rojas de Validación */
-        input.invalid { border: 2px solid var(--error) !important; background: rgba(239, 68, 68, 0.1); }
-        .err-msg { color: var(--error); font-size: 10px; margin-top: 4px; display: none; font-weight: bold; }
 
-        /* Calculadora (Lógica Excel) */
-        .check-item { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; font-size: 13px; cursor: pointer; }
-        .check-item input { width: auto; margin-top: 3px; }
-        .res-box { text-align: center; padding: 15px; border: 1px dashed var(--error); border-radius: 12px; margin-top: 15px; }
+        body {
+            margin: 0;
+            font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+            background: radial-gradient(circle at top right, #0f172a, var(--bg));
+            color: #f8fafc;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
 
-        /* Botones */
-        button { width: 100%; padding: 14px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; font-size: 14px; transition: 0.3s; }
-        .btn-main { background: var(--neon); color: #020617; }
-        .btn-main:disabled { background: #1e293b; color: #64748b; cursor: not-allowed; }
-        .btn-wa { background: var(--success); color: white; text-decoration: none; display: block; text-align: center; padding: 14px; border-radius: 10px; margin-top: 15px; }
-        
+        .container { width: 100%; max-width: 480px; padding: 20px; }
+
+        /* Estilo Innovador de Tarjetas */
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 28px;
+            margin-bottom: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        h2 {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent);
+            text-align: center;
+            margin-bottom: 25px;
+            opacity: 0.9;
+        }
+
+        /* Calculadora Estilo "Action Cards" */
+        .calc-grid { display: grid; gap: 12px; }
+
+        .ilic-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .ilic-card:hover { background: rgba(0, 243, 255, 0.05); border-color: rgba(0, 243, 255, 0.3); }
+
+        .ilic-card.active {
+            background: rgba(0, 243, 255, 0.1);
+            border-color: var(--accent);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+        }
+
+        .ilic-card input {
+            width: 22px; height: 22px; accent-color: var(--accent);
+            cursor: pointer;
+        }
+
+        .ilic-card span { font-size: 15px; font-weight: 500; flex: 1; }
+        .ilic-card .pts { font-size: 12px; opacity: 0.6; font-weight: bold; }
+
+        .tcmv-display {
+            margin-top: 25px;
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(145deg, rgba(0, 243, 255, 0.05), transparent);
+            border-radius: 20px;
+            border: 1px solid rgba(0, 243, 255, 0.2);
+        }
+
+        .tcmv-val {
+            font-size: 48px;
+            font-weight: 800;
+            color: var(--accent);
+            text-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
+        }
+
+        /* Inputs con validación innovadora */
+        .input-group { margin-bottom: 20px; }
+        label { display: block; font-size: 12px; margin-bottom: 8px; color: #94a3b8; padding-left: 5px; }
+
+        input[type="text"], input[type="email"] {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            color: white;
+            font-size: 15px;
+            box-sizing: border-box;
+            transition: 0.3s;
+        }
+
+        input:focus { border-color: var(--accent); outline: none; background: rgba(0, 243, 255, 0.02); }
+
+        /* Franja Roja de Error */
+        input.invalid {
+            border-color: var(--error) !important;
+            box-shadow: 0 0 0 4px rgba(255, 77, 77, 0.1);
+        }
+
+        .err-msg {
+            color: var(--error);
+            font-size: 11px;
+            margin-top: 6px;
+            padding-left: 5px;
+            font-weight: 600;
+            display: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            border-radius: 16px;
+            border: none;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: 0.4s;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #020617;
+            box-shadow: 0 4px 15px rgba(0, 243, 255, 0.3);
+        }
+
+        .btn-primary:disabled {
+            background: #1e293b;
+            color: #64748b;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        .btn-whatsapp {
+            background: #00ff88;
+            color: #020617;
+            text-decoration: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
         .hidden { display: none; }
+        .fade-in { animation: fadeIn 0.5s ease forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
-    <div class="container">
 
-        <div class="card">
-            <h2>Calculadora de Ilícitos</h2>
-            <div id="ilic-list">
-                <label class="check-item"><input type="checkbox" class="ilic" value="100"> Rif desactualizado (100)</label>
-                <label class="check-item"><input type="checkbox" class="ilic" value="150"> No emitir facturas (150)</label>
-                <label class="check-item"><input type="checkbox" class="ilic" value="150"> No tener libros (150)</label>
-                <label class="check-item"><input type="checkbox" class="ilic" value="150"> No presentar declaración (150)</label>
-                <label class="check-item"><input type="checkbox" class="ilic" value="100"> Declaración extemporánea (100)</label>
-            </div>
-            <div class="field" style="margin-top:15px;">
-                <label>Valor del TCMV (Bs.):</label>
-                <input type="number" id="v-tcmv" placeholder="Ingrese el valor actual" oninput="runCalc()">
-            </div>
-            <div class="res-box">
-                <div id="t-tcmv" style="font-size:16px; font-weight:bold; color:var(--neon);">0 TCMV</div>
-                <div id="t-bs" style="font-size:22px; font-weight:bold; color:var(--error);">Bs. 0,00</div>
-            </div>
+<div class="container">
+
+    <div class="glass-card fade-in">
+        <h2>Calculadora de Ilícitos</h2>
+        <div class="calc-grid">
+            <label class="ilic-card" id="card-1">
+                <input type="checkbox" class="ilic" value="100" onchange="updateCard(this, 'card-1')">
+                <span>Rif desactualizado</span>
+                <span class="pts">100</span>
+            </label>
+            <label class="ilic-card" id="card-2">
+                <input type="checkbox" class="ilic" value="150" onchange="updateCard(this, 'card-2')">
+                <span>No emitir facturas</span>
+                <span class="pts">150</span>
+            </label>
+            <label class="ilic-card" id="card-3">
+                <input type="checkbox" class="ilic" value="150" onchange="updateCard(this, 'card-3')">
+                <span>No tener libros</span>
+                <span class="pts">150</span>
+            </label>
+            <label class="ilic-card" id="card-4">
+                <input type="checkbox" class="ilic" value="150" onchange="updateCard(this, 'card-4')">
+                <span>No presentar declaración</span>
+                <span class="pts">150</span>
+            </label>
+            <label class="ilic-card" id="card-5">
+                <input type="checkbox" class="ilic" value="100" onchange="updateCard(this, 'card-5')">
+                <span>Declaración extemporánea</span>
+                <span class="pts">100</span>
+            </label>
         </div>
 
-        <div id="d1" class="card">
-            <h2>Diagnóstico de Riesgo</h2>
-            <div class="field">
-                <label>Empresa / Nombre Completo</label>
-                <input type="text" id="nombre" placeholder="Nombre de la empresa">
-                <div id="m-nom" class="err-msg">Nombre obligatorio.</div>
-            </div>
-            <div class="field">
-                <label>RIF (Ej: J-12345678-0)</label>
-                <input type="text" id="rif" placeholder="V-15160842-2">
-                <div id="m-rif" class="err-msg">RIF inválido (Letra-Números-Dígito).</div>
-            </div>
-            <div class="field">
-                <label>Correo Electrónico</label>
-                <input type="email" id="correo" placeholder="correo@empresa.com">
-                <div id="m-cor" class="err-msg">Correo inválido.</div>
-            </div>
-            <button id="btn-iniciar" class="btn-main" disabled onclick="startQ()">INICIAR EVALUACIÓN</button>
+        <div class="tcmv-display">
+            <div style="font-size: 11px; letter-spacing: 1px; color: #94a3b8; margin-bottom: 5px;">SANCIÓN ESTIMADA</div>
+            <div id="result-tcmv" class="tcmv-val">0 TCMV</div>
         </div>
-
-        <div id="d2" class="card hidden">
-            <h2 id="q-text" style="font-size:16px;"></h2>
-            <button class="btn-main" style="background:#1e293b; color:white; margin-bottom:10px;" onclick="ans(0)">SÍ</button>
-            <button class="btn-main" style="background:#1e293b; color:white; margin-bottom:10px;" onclick="ans(20)">NO</button>
-            <button class="btn-main" style="background:#1e293b; color:white;" onclick="ans(20)">NO SÉ</button>
-        </div>
-
-        <div id="d3" class="card hidden">
-            <h2 id="r-nivel"></h2>
-            <p id="r-desc" style="text-align:center; font-size:13px; color:#94a3b8;"></p>
-            <a id="wa-link" href="#" target="_blank" class="btn-wa">SOLICITAR ASESORÍA</a>
-            <button onclick="location.reload()" style="background:transparent; color:#64748b; font-size:12px; margin-top:10px; text-decoration:underline;">Reiniciar Todo</button>
-        </div>
-
     </div>
 
-    <script>
-        // Lógica de Concurrencia de tu Excel (Máximo + 50% del resto)
-        function runCalc() {
-            const checks = document.querySelectorAll('.ilic:checked');
-            let vals = Array.from(checks).map(c => parseFloat(c.value));
-            let totalTCMV = 0;
+    <div id="step-data" class="glass-card fade-in">
+        <h2>Diagnóstico de Riesgo</h2>
+        <div class="input-group">
+            <label>Nombre de la Empresa</label>
+            <input type="text" id="name" placeholder="Ej: Inversiones Mhakos C.A.">
+            <div id="err-name" class="err-msg">Por favor, ingrese el nombre comercial.</div>
+        </div>
+        <div class="input-group">
+            <label>RIF</label>
+            <input type="text" id="rif" placeholder="J-12345678-0">
+            <div id="err-rif" class="err-msg">Formato de RIF inválido (Ej: J-12345678-0).</div>
+        </div>
+        <div class="input-group">
+            <label>Correo Electrónico</label>
+            <input type="email" id="email" placeholder="gerencia@empresa.com">
+            <div id="err-email" class="err-msg">Ingrese un correo corporativo válido.</div>
+        </div>
+        <button id="btn-start" class="btn-primary" disabled onclick="nextStep()">COMENZAR EVALUACIÓN</button>
+    </div>
 
-            if (vals.length > 0) {
-                let max = Math.max(...vals);
-                let resto = vals.reduce((a, b) => a + b, 0) - max;
-                totalTCMV = max + (resto / 2);
-            }
+    <div id="step-questions" class="glass-card hidden">
+        <div style="text-align: center;">
+            <div id="progreso" style="font-size: 10px; color: var(--accent); margin-bottom: 10px; font-weight: 700;"></div>
+            <h3 id="q-text" style="font-size: 18px; line-height: 1.5; margin-bottom: 30px;"></h3>
+            <button class="btn-primary" style="background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 12px;" onclick="handleAns(0)">SÍ</button>
+            <button class="btn-primary" style="background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 12px;" onclick="handleAns(20)">NO</button>
+            <button class="btn-primary" style="background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1);" onclick="handleAns(20)">NO SÉ</button>
+        </div>
+    </div>
 
-            const valTCMV = document.getElementById('v-tcmv').value || 0;
-            document.getElementById('t-tcmv').innerText = `${totalTCMV} TCMV`;
-            document.getElementById('t-bs').innerText = `Bs. ${(totalTCMV * valTCMV).toLocaleString('es-VE', {minimumFractionDigits: 2})}`;
+    <div id="step-result" class="glass-card hidden">
+        <h2 id="res-title"></h2>
+        <p id="res-desc" style="text-align: center; font-size: 14px; color: #94a3b8; line-height: 1.6; margin-bottom: 30px;"></p>
+        <a id="wa-link" href="#" target="_blank" class="btn-whatsapp">WHATSAPP ESPECIALIZADO</a>
+        <button onclick="location.reload()" style="background: transparent; color: #64748b; font-size: 12px; margin-top: 15px; text-decoration: underline;">Reiniciar proceso</button>
+    </div>
+
+</div>
+
+<script>
+    // Lógica de Tarjetas de Calculadora
+    function updateCard(input, cardId) {
+        const card = document.getElementById(cardId);
+        if (input.checked) card.classList.add('active');
+        else card.classList.remove('active');
+        
+        // Calcular Concurrencia (Máximo + 50% de los demás)
+        const checks = document.querySelectorAll('.ilic:checked');
+        let vals = Array.from(checks).map(c => parseFloat(c.value));
+        let total = 0;
+
+        if (vals.length > 0) {
+            let max = Math.max(...vals);
+            let others = vals.reduce((a, b) => a + b, 0) - max;
+            total = max + (others / 2);
         }
-        document.querySelectorAll('.ilic').forEach(c => c.addEventListener('change', runCalc));
+        document.getElementById('result-tcmv').innerText = total + " TCMV";
+    }
 
-        // Validaciones en tiempo real con alertas rojas
-        const ins = { n: document.getElementById('nombre'), r: document.getElementById('rif'), c: document.getElementById('correo') };
-        function validate() {
-            const vN = ins.n.value.trim().length >= 3;
-            const vR = /^[VEJG]-?\d{7,9}-?\d$/.test(ins.r.value.trim().toUpperCase());
-            const vC = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(ins.c.value.trim());
+    // Validación de Formulario
+    const f = {
+        n: document.getElementById('name'),
+        r: document.getElementById('rif'),
+        e: document.getElementById('email')
+    };
 
-            toggle(ins.n, 'm-nom', vN);
-            toggle(ins.r, 'm-rif', vR);
-            toggle(ins.c, 'm-cor', vC);
+    function validate() {
+        const vN = f.n.value.trim().length >= 3;
+        const vR = /^[VEJG]-?\d{7,9}-?\d$/.test(f.r.value.trim().toUpperCase());
+        const vE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.e.value.trim());
 
-            document.getElementById('btn-iniciar').disabled = !(vN && vR && vC);
+        toggleUI(f.n, 'err-name', vN);
+        toggleUI(f.r, 'err-rif', vR);
+        toggleUI(f.e, 'err-email', vE);
+
+        document.getElementById('btn-start').disabled = !(vN && vR && vE);
+    }
+
+    function toggleUI(el, errId, isValid) {
+        if (el.value === "") {
+            el.classList.remove('invalid');
+            document.getElementById(errId).style.display = 'none';
+        } else if (!isValid) {
+            el.classList.add('invalid');
+            document.getElementById(errId).style.display = 'block';
+        } else {
+            el.classList.remove('invalid');
+            document.getElementById(errId).style.display = 'none';
         }
-        function toggle(el, id, ok) {
-            if (el.value === "") { el.classList.remove('invalid'); document.getElementById(id).style.display='none'; }
-            else if (!ok) { el.classList.add('invalid'); document.getElementById(id).style.display='block'; }
-            else { el.classList.remove('invalid'); document.getElementById(id).style.display='none'; }
+    }
+
+    Object.values(f).forEach(input => input.addEventListener('input', validate));
+
+    // Diagnóstico
+    const questions = [
+        "¿Sabes cuánto deberías estar pagando de impuestos este mes?",
+        "Si el SENIAT te fiscalizara mañana, ¿tendrías todo en orden?",
+        "¿Tu negocio maneja pagos en divisas o plataformas digitales?",
+        "¿Un especialista externo revisó tu situación recientemente?",
+        "¿Cumples actualmente con el IVSS e INCES?"
+    ];
+
+    let currentQ = 0;
+    let score = 0;
+
+    function nextStep() {
+        document.getElementById('step-data').classList.add('hidden');
+        document.getElementById('step-questions').classList.remove('hidden');
+        showQuestion();
+    }
+
+    function showQuestion() {
+        document.getElementById('progreso').innerText = `PASO ${currentQ + 1} / 5`;
+        document.getElementById('q-text').innerText = questions[currentQ];
+    }
+
+    function handleAns(pts) {
+        score += pts;
+        currentQ++;
+        if (currentQ < questions.length) showQuestion();
+        else showFinal();
+    }
+
+    function showFinal() {
+        document.getElementById('step-questions').classList.add('hidden');
+        document.getElementById('step-result').classList.remove('hidden');
+        
+        let level = "RIESGO BAJO";
+        let color = "#00ff88";
+        let desc = "Su perfil tributario parece saludable. Mantenga auditorías preventivas.";
+
+        if (score >= 80) { 
+            level = "RIESGO CRÍTICO"; color = "#ff4d4d"; 
+            desc = "Alerta máxima. Se detectaron fallas graves que pueden acarrear clausura inmediata.";
+        } else if (score >= 40) {
+            level = "RIESGO MODERADO"; color = "#ffaa00";
+            desc = "Existen inconsistencias que generarían multas en una fiscalización regular.";
         }
-        Object.values(ins).forEach(i => i.addEventListener('input', validate));
 
-        // Preguntas de Impacto Originales
-        const qs = [
-            "¿Sabes exactamente cuánto deberías estar pagando de impuestos este mes?",
-            "Si el SENIAT te fiscalizara mañana, ¿podrías presentar todo en orden?",
-            "¿Tu negocio recibe o realiza pagos en divisas o Zelle/Binance?",
-            "¿Cuándo fue la última vez que un especialista externo revisó tu situación?",
-            "¿Tienes trabajadores y sabes si cumples con el IVSS e INCES?"
-        ];
-        let cur = 0, pts = 0;
+        const title = document.getElementById('res-title');
+        title.innerText = level;
+        title.style.color = color;
+        document.getElementById('res-desc').innerText = desc;
 
-        function startQ() { document.getElementById('d1').classList.add('hidden'); document.getElementById('d2').classList.remove('hidden'); showQ(); }
-        function showQ() { document.getElementById('q-text').innerText = qs[cur]; }
-        function ans(p) { pts += p; cur++; if(cur < qs.length) showQ(); else res(); }
+        // WhatsApp
+        const asesores = ['584265112653', '584122089575'];
+        const a = asesores[Math.floor(Math.random() * asesores.length)];
+        const msj = `Hola! Soy de ${f.n.value}, RIF ${f.r.value}. Mi diagnóstico dio ${level}. Necesito asesoría especializada.`;
+        document.getElementById('wa-link').href = `https://api.whatsapp.com/send?phone=${a}&text=${encodeURIComponent(msj)}`;
+    }
+</script>
 
-        function res() {
-            document.getElementById('d2').classList.add('hidden');
-            document.getElementById('d3').classList.remove('hidden');
-            let n = "BAJO", c = "#22c55e", d = "Se recomienda una auditoría preventiva semestral.";
-            if(pts >= 80) { n = "CRÍTICO"; c = "#ef4444"; d = "Riesgo alto de clausura y multas severas. Contacte a un asesor."; }
-            else if(pts >= 40) { n = "MODERADO"; c = "#f59e0b"; d = "Existen vacíos que pueden causar sanciones en una inspección."; }
-            
-            const tag = document.getElementById('r-nivel'); tag.innerText = `RIESGO ${n}`; tag.style.color = c;
-            document.getElementById('r-desc').innerText = d;
-
-            const as = ['584265112653', '584122089575'];
-            const a = as[Math.floor(Math.random() * as.length)];
-            const m = `Hola! Soy ${ins.n.value}, RIF ${ins.r.value}. Mi riesgo es ${n}. Necesito ayuda experta.`;
-            document.getElementById('wa-link').href = `https://api.whatsapp.com/send?phone=${a}&text=${encodeURIComponent(m)}`;
-        }
-    </script>
 </body>
 </html>
