@@ -3,7 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Gestión Tributaria - VE</title>
+    <title>¿Tu empresa resiste una fiscalización hoy?</title>
+    <meta property="og:title" content="¿Tu empresa resiste una fiscalización hoy?">
+    <meta property="og:description" content="Calculadora de Multas TCMV y Diagnóstico de Riesgo Tributario 2026.">
+    <meta property="og:image" content="https://tributosatualcance.org/assets/img/og-preview.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
     <style>
         :root {
             --bg: #020617; --accent: #00f3ff; --card-bg: rgba(15, 23, 42, 0.7);
@@ -78,16 +83,34 @@
         }
         .btn-wa:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 15px 35px rgba(0, 255, 136, 0.5); }
 
+        .btn-neon {
+            background: transparent;
+            color: var(--accent);
+            border: 2px solid var(--accent);
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.3), inset 0 0 10px rgba(0, 243, 255, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 900;
+            transition: 0.3s;
+        }
+        .btn-neon:hover {
+            background: var(--accent);
+            color: #020617;
+            box-shadow: 0 0 25px var(--accent), 0 0 50px var(--accent);
+            transform: scale(1.05);
+        }
+
         .hidden { display: none; }
         .fade-in { animation: fadeIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
 
 <div class="container">
     <div class="glass-card fade-in">
-        <h2>Calculadora de Ilícitos</h2>
+        <h1>Calculadora de Multas TCMV y Riesgo Tributario Venezuela 2026</h1>
         <div class="calc-grid">
             <label class="ilic-card" id="c1">
                 <input type="checkbox" class="ilic" value="100" onchange="upd(this, 'c1')">
@@ -149,6 +172,8 @@
     <div id="step-res" class="glass-card hidden">
         <h2 id="res-level"></h2>
         <p id="res-desc" style="text-align: center; font-size: 14px; color: #94a3b8; line-height: 1.6; margin-bottom: 30px;"></p>
+        <p style="text-align: center; font-size: 14px; color: var(--accent); font-weight: 700; margin-bottom: 30px;">El 85% de las empresas en Venezuela presentan actualmente este mismo nivel de riesgo. No permitas que tu negocio sea parte de la estadística.</p>
+        <button id="download-pdf" class="btn-neon" style="margin-bottom: 25px; height: 58px;">Descargar Reporte de Alerta (PDF)</button>
         <a id="wa-link" href="#" target="_blank" class="btn-wa" style="height: 58px;">CONTACTAR CON ASESOR EXPERTO</a>
         <button onclick="location.reload()" style="background: transparent; color: #64748b; font-size: 11px; margin-top: 25px; text-decoration: underline;">Reiniciar Diagnóstico</button>
     </div>
@@ -225,6 +250,54 @@
         const a = ['584265112653', '584122089575'][Math.floor(Math.random()*2)];
         const m = `Hola! Soy de ${f.n.value}, RIF ${f.r.value}. Mi diagnóstico dio ${lvl}. Necesito contactar con un asesor experto de inmediato.`;
         document.getElementById('wa-link').href = `https://api.whatsapp.com/send?phone=${a}&text=${encodeURIComponent(m)}`;
+        
+        document.getElementById('download-pdf').onclick = () => {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const date = new Date().toLocaleDateString();
+            
+            // Header
+            doc.setFontSize(22);
+            doc.setTextColor(0, 243, 255);
+            doc.text("REPORTE DE ALERTA TRIBUTARIA", 105, 20, { align: "center" });
+            
+            // Separator
+            doc.setDrawColor(0, 243, 255);
+            doc.setLineWidth(1);
+            doc.line(20, 25, 190, 25);
+            
+            // Data
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            doc.text(`Fecha: ${date}`, 20, 40);
+            doc.text(`Empresa: ${f.n.value}`, 20, 50);
+            doc.text(`RIF: ${f.r.value}`, 20, 60);
+            
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.text(`Nivel de Riesgo Detectado: ${lvl}`, 20, 80);
+            doc.text(`Sanción Estimada: ${document.getElementById('res-tcmv').innerText}`, 20, 90);
+            
+            // Warning & CTA
+            doc.setFont(undefined, 'normal');
+            doc.setTextColor(255, 77, 77);
+            doc.setFontSize(12);
+            doc.text("ADVERTENCIA:", 20, 110);
+            doc.setTextColor(0, 0, 0);
+            doc.text("La digitalización de la fiscalización en 2026 ha incrementado la detección de ilícitos en un 300%.", 20, 115, { maxWidth: 170 });
+            
+            doc.setFont(undefined, 'bold');
+            doc.text("RECOMENDACIONES:", 20, 130);
+            doc.setFont(undefined, 'normal');
+            doc.text("Este reporte es preliminar. Se recomienda una auditoría de libros de IVA y RIF en las próximas 48 horas para evitar cierres de establecimiento.", 20, 135, { maxWidth: 170 });
+            
+            // Footer
+            doc.setFontSize(10);
+            doc.setTextColor(150, 150, 150);
+            doc.text("Generado por Sistema de Gestión Tributaria VE 2026", 105, 280, { align: "center" });
+            
+            doc.save(`Reporte_Riesgo_${f.r.value}.pdf`);
+        };
     }
 </script>
 </body>
