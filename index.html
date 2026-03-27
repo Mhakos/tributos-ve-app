@@ -29,7 +29,6 @@
 
         h2 { font-size: 11px; text-transform: uppercase; letter-spacing: 2.5px; color: var(--accent); text-align: center; margin-bottom: 22px; opacity: 0.8; }
 
-        /* Calculadora Estilo Action Cards */
         .calc-grid { display: grid; gap: 10px; }
         .ilic-card {
             background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08);
@@ -48,7 +47,6 @@
         .tcmv-label { font-size: 8px; letter-spacing: 2px; color: #94a3b8; margin-bottom: 2px; font-weight: 700; }
         .tcmv-val { font-size: 30px; font-weight: 800; color: var(--accent); text-shadow: 0 0 15px rgba(0, 243, 255, 0.3); }
 
-        /* Formulario y Validaciones */
         .input-group { margin-bottom: 18px; }
         label { display: block; font-size: 11px; margin-bottom: 6px; color: #94a3b8; padding-left: 5px; }
         input {
@@ -58,11 +56,9 @@
         }
         input:focus { border-color: var(--accent); outline: none; background: rgba(0, 243, 255, 0.02); }
         
-        /* Franja Roja y Resplandor en Error */
         input.invalid { border-color: var(--error) !important; box-shadow: 0 0 12px rgba(255, 77, 77, 0.15); }
         .err-msg { color: var(--error); font-size: 10px; margin-top: 5px; font-weight: 600; display: none; padding-left: 5px; }
 
-        /* BOTONES PREMIUM (FORMA DE PÍLDORA) */
         button { width: 100%; padding: 16px; border-radius: 50px; border: none; font-weight: 800; font-size: 14px; cursor: pointer; transition: 0.4s; font-family: inherit; }
         
         .btn-primary { 
@@ -194,12 +190,10 @@
         document.getElementById('res-tcmv').innerText = total + " TCMV";
     }
 
-    // VALIDACIÓN ESTRICTA
     const f = { n: document.getElementById('name'), r: document.getElementById('rif'), e: document.getElementById('email') };
     function validate() {
         const vN = f.n.value.trim().length >= 3;
         const vR = /^[VEJG]-?\d{7,9}-?\d$/.test(f.r.value.trim().toUpperCase());
-        // Regex mejorado: Requiere @, punto y al menos 2 caracteres de dominio (ej: .com)
         const vE = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(f.e.value.trim());
 
         toggle(f.n, 'e-name', vN); 
@@ -256,48 +250,49 @@
             const doc = new jsPDF();
             const date = new Date().toLocaleDateString();
             
-            // Banner Superior: Logo ocupando todo el ancho (aprox. 190mm x 20mm)
-            doc.addImage('./assets/img/fondo-pdf.png', 'PNG', 10, 10, 190, 20, undefined, 'FAST');
+            // 1. Banner Superior (Ancho total: 190mm, Alto: 40mm)
+            doc.addImage('./assets/img/fondo-pdf.png', 'PNG', 10, 10, 190, 40, undefined, 'FAST');
             
-            // Título: 'Diagnóstico preliminar' centrado sobre el banner o justo debajo, en color blanco y negrita
-            doc.setFontSize(18);
+            // 2. Título 'Diagnóstico preliminar' (Debajo del logo y centrado)
+            doc.setFontSize(22);
             doc.setFont(undefined, 'bold');
-            doc.setTextColor(255, 255, 255);
-            const title = "Diagnóstico preliminar";
-            const titleWidth = doc.getTextWidth(title);
-            const pageCenter = doc.internal.pageSize.getWidth() / 2;
-            const titleX = pageCenter - (titleWidth / 2);
-            doc.text(title, titleX, 25);
+            doc.setTextColor(33, 37, 41); // Color oscuro profesional
+            doc.text("Diagnóstico preliminar", 105, 65, { align: "center" });
             
-            // Data
+            // 3. Datos del Diagnóstico (Todos centrados en x=105)
             doc.setFontSize(12);
-            doc.setTextColor(0, 0, 0);
-            doc.text(`Fecha: ${date}`, 20, 40);
-            doc.text(`Empresa: ${f.n.value}`, 20, 50);
-            doc.text(`RIF: ${f.r.value}`, 20, 60);
-            
-            doc.setFontSize(14);
-            doc.setFont(undefined, 'bold');
-            doc.text(`Nivel de Riesgo Detectado: ${lvl}`, 20, 80);
-            doc.text(`Sanción Estimada: ${document.getElementById('res-tcmv').innerText}`, 20, 90);
-            
-            // Warning & CTA
             doc.setFont(undefined, 'normal');
+            doc.text(`Fecha: ${date}`, 105, 80, { align: "center" });
+            doc.text(`Empresa: ${f.n.value}`, 105, 90, { align: "center" });
+            doc.text(`RIF: ${f.r.value}`, 105, 100, { align: "center" });
+            
+            // 4. Resultados (Centrados para aprovechar espacio)
+            doc.setFontSize(16);
+            doc.setFont(undefined, 'bold');
+            doc.text(`Nivel de Riesgo Detectado: ${lvl}`, 105, 120, { align: "center" });
+            doc.text(`Sanción Estimada: ${document.getElementById('res-tcmv').innerText}`, 105, 135, { align: "center" });
+            
+            // 5. Advertencia y Recomendaciones (Ajustadas y centradas)
+            doc.setFontSize(12);
+            doc.setFont(undefined, 'bold');
             doc.setTextColor(255, 77, 77);
-            doc.setFontSize(12);
-            doc.text("ADVERTENCIA:", 20, 110);
+            doc.text("ADVERTENCIA:", 105, 155, { align: "center" });
+            doc.setFont(undefined, 'normal');
             doc.setTextColor(0, 0, 0);
-            doc.text("La digitalización de la fiscalización en 2026 ha incrementado la detección de ilícitos en un 300%.", 20, 115, { maxWidth: 170 });
+            doc.text("La digitalización de la fiscalización en 2026 ha incrementado la detección de ilícitos en un 300%.", 105, 162, { align: "center", maxWidth: 160 });
             
             doc.setFont(undefined, 'bold');
-            doc.text("RECOMENDACIONES:", 20, 130);
+            doc.text("RECOMENDACIONES:", 105, 185, { align: "center" });
             doc.setFont(undefined, 'normal');
-            doc.text("Este reporte es preliminar. Se recomienda una auditoría de libros de IVA y RIF en las próximas 48 horas para evitar cierres de establecimiento.", 20, 135, { maxWidth: 170 });
+            // Corrección ortográfica aplicada: 'reporte es' y '48 horas'
+            const recText = "Este reporte es preliminar. Se recomienda una auditoría de libros de IVA y RIF en las próximas 48 horas para evitar cierres de establecimiento.";
+            doc.text(recText, 105, 192, { align: "center", maxWidth: 160 });
             
-            // Pie de Página: Texto centrado y en color blanco legible
+            // 6. Pie de Página (Centrado al final de la hoja)
+            const pageH = doc.internal.pageSize.height;
             doc.setFontSize(10);
-            doc.setTextColor(255, 255, 255);
-            doc.text("Generado por Sistema de Gestión Tributaria VE 2026", pageCenter, 285, { align: "center" });
+            doc.setTextColor(150, 150, 150); // Gris claro legible
+            doc.text("Generado por Sistema de Gestión Tributaria VE 2026", 105, pageH - 15, { align: "center" });
             
             doc.save(`Reporte_Riesgo_${f.r.value}.pdf`);
         };
