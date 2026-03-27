@@ -27,25 +27,17 @@
             padding: 25px; margin-bottom: 25px; box-shadow: 0 15px 45px rgba(0, 0, 0, 0.6);
         }
 
-        /* Título Principal */
-        h1 { 
-            font-size: 18px; 
+        /* Títulos H1 y H2 unificados en tamaño */
+        h1, h2 { 
+            font-size: 18px; /* Mismo tamaño exacto */
             text-align: center; 
             margin-bottom: 25px; 
             line-height: 1.4;
-            color: #f8fafc;
+            font-weight: 700;
         }
 
-        /* Título de Secciones (Actualizado a 18px para coincidir con h1) */
-        h2 { 
-            font-size: 18px; 
-            text-transform: uppercase; 
-            letter-spacing: 1px; 
-            color: var(--accent); 
-            text-align: center; 
-            margin-bottom: 22px; 
-            opacity: 0.9; 
-        }
+        h1 { color: #f8fafc; }
+        h2 { color: var(--accent); text-transform: none; letter-spacing: normal; opacity: 1; }
 
         .calc-grid { display: grid; gap: 10px; }
         .ilic-card {
