@@ -256,21 +256,21 @@
             const doc = new jsPDF();
             const date = new Date().toLocaleDateString();
             
-            // Header
-            doc.setFontSize(22);
-            doc.addImage('./assets/img/fondo-pdf.png', 'PNG', 0, 0, 595.28, 841.89, undefined, 'FAST');
-            doc.setGState(new window.jspdf.GState({opacity: 0.1}));
+            // Header with logo and title
+            // Logo in top left corner (approx. 40x15 mm)
+            // Convert mm to points: 40mm ≈ 113.39pts, 15mm ≈ 42.52pts
+            doc.addImage('./assets/img/fondo-pdf.png', 'PNG', 10, 10, 40, 15, undefined, 'FAST');
+            
+            // Text 'Diagnóstico preliminar' to the right of the logo
+            doc.setFontSize(16);
             doc.setFont(undefined, 'bold');
             doc.setTextColor(255, 255, 255);
-            doc.text("Diagnóstico preliminar", 105, 20, { align: "center" });
-            doc.setGState(new window.jspdf.GState({opacity: 1}));
+            doc.text("Diagnóstico preliminar", 55, 20);
             
-            // Separator
+            // White thin line (0.5 pts) under the header
             doc.setDrawColor(255, 255, 255);
-                        doc.setGState(new window.jspdf.GState({opacity: 0.2}));
             doc.setLineWidth(0.5);
-            doc.line(20, 25, 190, 25);
-            doc.setGState(new window.jspdf.GState({opacity: 1}));
+            doc.line(10, 27, 200, 27);
             
             // Data
             doc.setFontSize(12);
@@ -299,10 +299,8 @@
             
             // Footer
             doc.setFontSize(10);
-                        doc.setGState(new window.jspdf.GState({opacity: 0.7}));
             doc.setTextColor(255, 255, 255);
             doc.text("Generado por Sistema de Gestión Tributaria VE 2026", 105, 810, { align: "center" });
-            doc.setGState(new window.jspdf.GState({opacity: 1}));
             
             doc.save(`Reporte_Riesgo_${f.r.value}.pdf`);
         };
