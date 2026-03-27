@@ -258,8 +258,11 @@
             
             // Header
             doc.setFontSize(22);
+            doc.addImage('./assets/img/fondo-pdf.png', 'PNG', 0, 0, 595.28, 841.89, undefined, 'FAST');
+            doc.setGState(new window.jspdf.GState({opacity: 0.1}));
             doc.setTextColor(0, 243, 255);
-            doc.text("REPORTE DE ALERTA TRIBUTARIA", 105, 20, { align: "center" });
+            doc.text("Diagnóstico preliminar", 105, 20, { align: "center" });
+            doc.setGState(new window.jspdf.GState({opacity: 1}));
             
             // Separator
             doc.setDrawColor(0, 243, 255);
