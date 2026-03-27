@@ -260,14 +260,17 @@
             doc.setFontSize(22);
             doc.addImage('./assets/img/fondo-pdf.png', 'PNG', 0, 0, 595.28, 841.89, undefined, 'FAST');
             doc.setGState(new window.jspdf.GState({opacity: 0.1}));
-            doc.setTextColor(0, 243, 255);
+            doc.setFont(undefined, 'bold');
+            doc.setTextColor(255, 255, 255);
             doc.text("Diagnóstico preliminar", 105, 20, { align: "center" });
             doc.setGState(new window.jspdf.GState({opacity: 1}));
             
             // Separator
-            doc.setDrawColor(0, 243, 255);
-            doc.setLineWidth(1);
+            doc.setDrawColor(255, 255, 255);
+                        doc.setGState(new window.jspdf.GState({opacity: 0.2}));
+            doc.setLineWidth(0.5);
             doc.line(20, 25, 190, 25);
+            doc.setGState(new window.jspdf.GState({opacity: 1}));
             
             // Data
             doc.setFontSize(12);
@@ -296,8 +299,10 @@
             
             // Footer
             doc.setFontSize(10);
-            doc.setTextColor(150, 150, 150);
-            doc.text("Generado por Sistema de Gestión Tributaria VE 2026", 105, 280, { align: "center" });
+                        doc.setGState(new window.jspdf.GState({opacity: 0.7}));
+            doc.setTextColor(255, 255, 255);
+            doc.text("Generado por Sistema de Gestión Tributaria VE 2026", 105, 810, { align: "center" });
+            doc.setGState(new window.jspdf.GState({opacity: 1}));
             
             doc.save(`Reporte_Riesgo_${f.r.value}.pdf`);
         };
