@@ -256,21 +256,18 @@
             const doc = new jsPDF();
             const date = new Date().toLocaleDateString();
             
-            // Header with logo and title
-            // Logo in top left corner (approx. 40x15 mm)
-            // Convert mm to points: 40mm ≈ 113.39pts, 15mm ≈ 42.52pts
-            doc.addImage('./assets/img/fondo-pdf.png', 'PNG', 10, 10, 40, 15, undefined, 'FAST');
+            // Banner Superior: Logo ocupando todo el ancho (aprox. 190mm x 20mm)
+            doc.addImage('./assets/img/fondo-pdf.png', 'PNG', 10, 10, 190, 20, undefined, 'FAST');
             
-            // Text 'Diagnóstico preliminar' to the right of the logo
-            doc.setFontSize(16);
+            // Título: 'Diagnóstico preliminar' centrado sobre el banner o justo debajo, en color blanco y negrita
+            doc.setFontSize(18);
             doc.setFont(undefined, 'bold');
             doc.setTextColor(255, 255, 255);
-            doc.text("Diagnóstico preliminar", 55, 20);
-            
-            // White thin line (0.5 pts) under the header
-            doc.setDrawColor(255, 255, 255);
-            doc.setLineWidth(0.5);
-            doc.line(10, 27, 200, 27);
+            const title = "Diagnóstico preliminar";
+            const titleWidth = doc.getTextWidth(title);
+            const pageCenter = doc.internal.pageSize.getWidth() / 2;
+            const titleX = pageCenter - (titleWidth / 2);
+            doc.text(title, titleX, 25);
             
             // Data
             doc.setFontSize(12);
@@ -297,10 +294,10 @@
             doc.setFont(undefined, 'normal');
             doc.text("Este reporte es preliminar. Se recomienda una auditoría de libros de IVA y RIF en las próximas 48 horas para evitar cierres de establecimiento.", 20, 135, { maxWidth: 170 });
             
-            // Footer
+            // Pie de Página: Texto centrado y en color blanco legible
             doc.setFontSize(10);
             doc.setTextColor(255, 255, 255);
-            doc.text("Generado por Sistema de Gestión Tributaria VE 2026", 105, 810, { align: "center" });
+            doc.text("Generado por Sistema de Gestión Tributaria VE 2026", pageCenter, 285, { align: "center" });
             
             doc.save(`Reporte_Riesgo_${f.r.value}.pdf`);
         };
