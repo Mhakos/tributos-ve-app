@@ -27,6 +27,15 @@
             padding: 25px; margin-bottom: 25px; box-shadow: 0 15px 45px rgba(0, 0, 0, 0.6);
         }
 
+        /* Estilo actualizado para el Título Principal */
+        h1 { 
+            font-size: 18px; /* Letras más pequeñas */
+            text-align: center; /* Título centrado */
+            margin-bottom: 25px; 
+            line-height: 1.4;
+            color: #f8fafc;
+        }
+
         h2 { font-size: 11px; text-transform: uppercase; letter-spacing: 2.5px; color: var(--accent); text-align: center; margin-bottom: 22px; opacity: 0.8; }
 
         .calc-grid { display: grid; gap: 10px; }
@@ -266,13 +275,13 @@
             doc.text(`Empresa: ${f.n.value}`, 105, 90, { align: "center" });
             doc.text(`RIF: ${f.r.value}`, 105, 100, { align: "center" });
             
-            // 4. Resultados (Centrados para aprovechar espacio)
+            // 4. Resultados (Centrados)
             doc.setFontSize(16);
             doc.setFont(undefined, 'bold');
             doc.text(`Nivel de Riesgo Detectado: ${lvl}`, 105, 120, { align: "center" });
             doc.text(`Sanción Estimada: ${document.getElementById('res-tcmv').innerText}`, 105, 135, { align: "center" });
             
-            // 5. Advertencia y Recomendaciones (Ajustadas y centradas)
+            // 5. Advertencia y Recomendaciones
             doc.setFontSize(12);
             doc.setFont(undefined, 'bold');
             doc.setTextColor(255, 77, 77);
@@ -284,14 +293,14 @@
             doc.setFont(undefined, 'bold');
             doc.text("RECOMENDACIONES:", 105, 185, { align: "center" });
             doc.setFont(undefined, 'normal');
-            // Corrección ortográfica aplicada: 'reporte es' y '48 horas'
+            // Corrección ortográfica aplicada
             const recText = "Este reporte es preliminar. Se recomienda una auditoría de libros de IVA y RIF en las próximas 48 horas para evitar cierres de establecimiento.";
             doc.text(recText, 105, 192, { align: "center", maxWidth: 160 });
             
-            // 6. Pie de Página (Centrado al final de la hoja)
+            // 6. Pie de Página institucional
             const pageH = doc.internal.pageSize.height;
             doc.setFontSize(10);
-            doc.setTextColor(150, 150, 150); // Gris claro legible
+            doc.setTextColor(150, 150, 150);
             doc.text("Generado por Sistema de Gestión Tributaria VE 2026", 105, pageH - 15, { align: "center" });
             
             doc.save(`Reporte_Riesgo_${f.r.value}.pdf`);
