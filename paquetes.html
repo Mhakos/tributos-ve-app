@@ -1,0 +1,146 @@
+<style>
+  /* Estilos para el efecto full-width */
+  .full-width-section {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: #1a1a1a; /* Fondo oscuro para contrastar el glassmorphism */
+  }
+
+  /* Contenedor de las tarjetas */
+  .servicios-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    max-width: 1200px; /* Ancho máximo para el contenido dentro del full-width */
+    margin: 0 auto;
+  }
+
+  /* Estilos de la tarjeta */
+  .paquete-card {
+    background: rgba(0, 0, 0, 0.6); /* Fondo oscuro semitransparente */
+    border: 1px solid rgba(0, 243, 255, 0.4); /* Borde fino cian neón */
+    box-shadow: 0 0 15px rgba(0, 243, 255, 0.6); /* Resplandor neón */
+    backdrop-filter: blur(10px); /* Desenfoque de fondo */
+    border-radius: 15px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    color: #fff;
+    text-align: center;
+    position: relative;
+  }
+
+  .paquete-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+  }
+
+  .paquete-card h3 {
+    margin: 15px 0;
+    color: #00f3ff;
+  }
+
+  .paquete-card .expand-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
+    padding: 0 20px;
+  }
+
+  .paquete-card.expanded .expand-content {
+    max-height: 300px; /* Altura suficiente para el contenido, ajustar si es necesario */
+    padding: 20px;
+  }
+
+  .paquete-card p {
+    font-size: 0.9em;
+    line-height: 1.5;
+    margin-bottom: 20px;
+  }
+
+  .paquete-card .call-to-action {
+    display: inline-block;
+    background-color: #00f3ff;
+    color: #1a1a1a;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    margin-bottom: 20px;
+    transition: background-color 0.3s ease;
+  }
+
+  .paquete-card .call-to-action:hover {
+    background-color: #00e0ef;
+  }
+</style>
+
+<div class="full-width-section">
+  <div class="servicios-grid">
+    <!-- Tarjeta 1 -->
+    <div class="paquete-card" data-package="1">
+      <img src="assets/img/Paquete1.jpeg" alt="Paquete 1 de Servicios">
+      <!-- COMENTARIO: Reemplazar "assets/img/Paquete1.jpeg" con el permalink de tu Biblioteca de Medios de WordPress aquí. -->
+      <h3>Paquete Básico</h3>
+      <div class="expand-content">
+        <p>Descripción detallada del paquete básico. Ideal para pequeñas empresas y emprendedores que buscan una gestión tributaria eficiente.</p>
+        <a href="#" class="call-to-action">Ver Detalles</a>
+      </div>
+    </div>
+
+    <!-- Tarjeta 2 -->
+    <div class="paquete-card" data-package="2">
+      <img src="assets/img/Paquete2.jpeg" alt="Paquete 2 de Servicios">
+      <!-- COMENTARIO: Reemplazar "assets/img/Paquete2.jpeg" con el permalink de tu Biblioteca de Medios de WordPress aquí. -->
+      <h3>Paquete Estándar</h3>
+      <div class="expand-content">
+        <p>Este paquete ofrece soluciones completas para negocios en crecimiento, incluyendo asesoría personalizada y declaraciones avanzadas.</p>
+        <a href="#" class="call-to-action">Saber Más</a>
+      </div>
+    </div>
+
+    <!-- Tarjeta 3 -->
+    <div class="paquete-card" data-package="3">
+      <img src="assets/img/Paquete3.jpeg" alt="Paquete 3 de Servicios">
+      <!-- COMENTARIO: Reemplazar "assets/img/Paquete3.jpeg" con el permalink de tu Biblioteca de Medios de WordPress aquí. -->
+      <h3>Paquete Premium</h3>
+      <div class="expand-content">
+        <p>La solución definitiva para grandes empresas, con gestión integral, planificación fiscal estratégica y soporte VIP 24/7.</p>
+        <a href="#" class="call-to-action">Contratar Ahora</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const cards = document.querySelectorAll(".paquete-card");
+
+    cards.forEach(card => {
+      card.addEventListener("click", function() {
+        // Si la tarjeta ya está expandida, la colapsa.
+        if (this.classList.contains("expanded")) {
+          this.classList.remove("expanded");
+        } else {
+          // Colapsa cualquier otra tarjeta expandida
+          cards.forEach(otherCard => {
+            if (otherCard !== this && otherCard.classList.contains("expanded")) {
+              otherCard.classList.remove("expanded");
+            }
+          });
+          // Expande la tarjeta actual
+          this.classList.add("expanded");
+        }
+      });
+    });
+  });
+</script>
